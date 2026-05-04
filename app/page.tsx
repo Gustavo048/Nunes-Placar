@@ -19,7 +19,7 @@ export default async function Home() {
       {/* Camada de escurecimento e desfoque para destacar o conteúdo */}
       <div className="absolute inset-0 bg-neutral-950/80 backdrop-blur-sm -z-10" />
 
-      <header className="w-full max-w-[1400px] mb-6 flex justify-between items-center border-b border-white/10 pb-4">
+      <header className="w-full max-w-350 mb-6 flex justify-between items-center border-b border-white/10 pb-4">
         <h1 className="text-2xl md:text-4xl font-black text-white tracking-tighter">
           NUNES <span className="text-yellow-500">PLACAR</span>
         </h1>

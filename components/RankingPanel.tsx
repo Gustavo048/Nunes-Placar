@@ -14,7 +14,7 @@ interface RankingPanelProps {
 
 export default function RankingPanel({ data }: RankingPanelProps) {
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 h-full flex flex-col shadow-2xl min-h-[500px]">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 h-full flex flex-col shadow-2xl min-h-125">
 
       {/* Cabeçalho do Painel */}
       <div className="flex items-center gap-3 mb-6">
@@ -47,7 +47,7 @@ export default function RankingPanel({ data }: RankingPanelProps) {
                 </span>
                 
                 <div>
-                  <p className="text-white font-bold uppercase text-sm group-hover:text-yellow-500 transition-colors truncate max-w-[150px]">
+                  <p className="text-white font-bold uppercase text-sm group-hover:text-yellow-500 transition-colors truncate max-w-37.5">
                     {item.teamName}
                   </p>
                   <p className="text-gray-500 text-[10px] uppercase tracking-tighter">

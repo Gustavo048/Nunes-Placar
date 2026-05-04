@@ -41,9 +41,10 @@ export default function ScoreBoard() {
           setTeamB({ name: teamB.name, score: 0, history: [] });
           alert("Partida registrada no Ranking!");
         }
-      } catch (error) {
-        alert("Erro ao salvar no banco de dados.");
-      }
+      } catch (error) { 
+  console.error("Falha ao salvar no ranking:", error);
+  alert("Erro ao salvar no banco de dados.");
+}
     }
   };
 
