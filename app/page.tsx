@@ -2,6 +2,8 @@ import RankingPanel from "@/components/RankingPanel";
 import ScoreBoard from "@/components/ScoreBoard";
 import { getRanking } from './actions/ranking';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   // Busca os dados  NeonDB
   const rankingInitialData = await getRanking();
