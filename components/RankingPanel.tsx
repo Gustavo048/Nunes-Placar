@@ -1,7 +1,6 @@
 'use client';
 
-
-interface RankingItem {
+export interface RankingItem {
   id: string;
   teamName: string;
   victories: number;
@@ -10,16 +9,27 @@ interface RankingItem {
 
 interface RankingPanelProps {
   data: RankingItem[];
+  
+  activeMode: 'TRUCO' | 'CANASTRA' | 'DOMINO';
 }
 
-export default function RankingPanel({ data }: RankingPanelProps) {
+export default function RankingPanel({ data, activeMode }: RankingPanelProps) {
   return (
     <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 h-full flex flex-col shadow-2xl min-h-125">
 
       {/* Cabeçalho do Painel */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-2 h-8 bg-yellow-500 rounded-full shadow-[0_0_10px_rgba(234,179,8,0.4)]" />
-        <h2 className="text-xl font-bold text-white uppercase tracking-widest">Ranking Global</h2>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-8 bg-yellow-500 rounded-full shadow-[0_0_10px_rgba(234,179,8,0.4)]" />
+          <h2 className="text-xl font-bold text-white uppercase tracking-widest">
+            Ranking {activeMode.toLowerCase()} {/* Exibe a modalidade dinamicamente */}
+          </h2>
+        </div>
+        
+        {/* Badge visual do modo ativo */}
+        <span className="text-[10px] bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-2 py-1 rounded-md font-black tracking-tighter">
+          {activeMode}
+        </span>
       </div>
 
       {/* Lista de Ranking */}
@@ -36,8 +46,6 @@ export default function RankingPanel({ data }: RankingPanelProps) {
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="flex items-center gap-4">
-
-                {/* Posição com cores de destaque para o Top 3 */}
                 <span className={`text-xl font-black w-8 text-center ${
                   index === 0 ? 'text-yellow-500' : 
                   index === 1 ? 'text-gray-300' : 
@@ -65,10 +73,10 @@ export default function RankingPanel({ data }: RankingPanelProps) {
         )}
       </div>
 
-      {/* Rodapé Informativo */}
+      {/* Rodapé  */}
       <div className="mt-6 pt-4 border-t border-white/5 text-center">
         <p className="text-[9px] text-gray-500 uppercase font-black tracking-[0.3em]">
-          Persistência
+          Database: {activeMode} 
         </p>
       </div>
     </div>

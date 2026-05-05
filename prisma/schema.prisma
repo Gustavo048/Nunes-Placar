@@ -10,8 +10,17 @@ datasource db {
 
 model Ranking {
   id          String   @id @default(cuid())
-  teamName    String   @unique
-  victories   Int      @default(0)
-  totalPoints Int      @default(0)
-  updatedAt   DateTime @updatedAt
+  teamName    String
+  gameMode    GameMode   // ✅ agora tipado corretamente
+  victories   Int        @default(0)
+  totalPoints Int        @default(0)
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([teamName, gameMode]) // ✅ ESSENCIAL pro upsert
+}
+
+enum GameMode {
+  CANASTRA
+  TRUCO
+  DOMINO
 }

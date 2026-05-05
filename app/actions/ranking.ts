@@ -2,34 +2,53 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { GameMode } from "@prisma/client";
 
-// Busca os top 10 do ranking
-export async function getRanking() {
-  return await prisma.ranking.findMany({
-    orderBy: [
-      { victories: 'desc' },
-      { totalPoints: 'desc' }
-    ],
-    take: 10
-  });
+// Busca ranking
+export async function getRanking(gameMode: GameMode = 'CANASTRA') {
+  try {
+    return await prisma.ranking.findMany({
+      where: { gameMode },
+      orderBy: [
+        { victories: 'desc' },
+        { totalPoints: 'desc' }
+      ],
+      take: 10
+    });
+  } catch (error) {
+    console.error("Erro ao buscar ranking:", error);
+    return [];
+  }
 }
 
-// Registra o fim de uma partida
-export async function recordVictory(teamName: string, points: number) {
+// Registra vitória
+export async function recordVictory(
+  teamName: string,
+  points: number,
+  gameMode: GameMode
+) {
   try {
+    const name = teamName.toUpperCase();
+
     await prisma.ranking.upsert({
-      where: { teamName: teamName.toUpperCase() },
+      where: {
+        teamName_gameMode: {
+          teamName: name,
+          gameMode
+        }
+      },
       update: {
         victories: { increment: 1 },
-        totalPoints: { increment: points },
+        totalPoints: { increment: points }
       },
       create: {
-        teamName: teamName.toUpperCase(),
+        teamName: name,
+        gameMode,
         victories: 1,
-        totalPoints: points,
-      },
+        totalPoints: points
+      }
     });
-    
+
     revalidatePath('/');
     return { success: true };
   } catch (error) {
