@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react'; // ADICIONADO: useEffect
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion'; // ADICIONADO: Componentes de animação
 import TeamColumn from './TeamColumn';
 import { recordVictory } from '@/app/actions/ranking';
 
@@ -19,7 +20,6 @@ type Team = {
   history: number[];
 };
 
-// ✅ UPDATE: Agora recebemos onModeChange do componente pai (page.tsx)
 interface ScoreBoardProps {
   onModeChange?: (mode: GameMode) => void;
 }
@@ -32,7 +32,6 @@ export default function ScoreBoard({ onModeChange }: ScoreBoardProps) {
     { id: 'B', name: 'Equipe B', score: 0, history: [] }
   ]);
 
-  // ✅ ADICIONADO: Notifica o pai sempre que o modo local mudar
   useEffect(() => {
     if (onModeChange) {
       onModeChange(gameMode);
@@ -69,38 +68,17 @@ export default function ScoreBoard({ onModeChange }: ScoreBoardProps) {
 
   const handleFinishGame = async () => {
     const [teamA, teamB] = teams;
-
-    if (teamA.score === teamB.score) {
-      return alert("O jogo está empatado!");
-    }
-
-    if (teamA.score === 0 && teamB.score === 0) {
-      return alert("Inicie uma partida primeiro!");
-    }
+    if (teamA.score === teamB.score) return alert("O jogo está empatado!");
+    if (teamA.score === 0 && teamB.score === 0) return alert("Inicie uma partida primeiro!");
 
     const winner = getWinner();
-
-    const confirm = window.confirm(
-      `Finalizar partida de ${gameMode}? Vitória de ${winner.name}!`
-    );
+    const confirm = window.confirm(`Finalizar partida de ${gameMode}? Vitória de ${winner.name}!`);
 
     if (confirm) {
       try {
-        const result = await recordVictory(
-          winner.name,
-          winner.score,
-          gameMode
-        );
-
+        const result = await recordVictory(winner.name, winner.score, gameMode);
         if (result.success) {
-          setTeams(prev =>
-            prev.map(team => ({
-              ...team,
-              score: 0,
-              history: []
-            }))
-          );
-
+          setTeams(prev => prev.map(team => ({ ...team, score: 0, history: [] })));
           alert("Partida registrada no Ranking!");
         }
       } catch (error) {
@@ -112,33 +90,35 @@ export default function ScoreBoard({ onModeChange }: ScoreBoardProps) {
 
   const resetGame = () => {
     if (window.confirm("Deseja realmente zerar o placar da partida atual?")) {
-      setTeams(prev =>
-        prev.map(team => ({
-          ...team,
-          score: 0,
-          history: []
-        }))
-      );
+      setTeams(prev => prev.map(team => ({ ...team, score: 0, history: [] })));
     }
   };
 
   return (
     <div className="w-full max-w-5xl mx-auto">
-      {/* Barra de Ferramentas */}
+      {/* Barra de Ferramentas com Animação de Layout */}
       <div className="flex flex-wrap justify-between items-center gap-4 mb-8 bg-black/40 p-4 rounded-2xl backdrop-blur-md border border-white/10">
         
-        <div className="flex gap-2 bg-white/5 p-1 rounded-xl">
+        <div className="flex gap-2 bg-white/5 p-1 rounded-xl relative">
           {Object.entries(GAME_MODES).map(([id, mode]) => (
             <button
               key={id}
               onClick={() => setGameMode(id as GameMode)}
-              className={`px-4 md:px-6 py-2 rounded-lg font-bold text-xs md:text-sm transition-all ${
-                gameMode === id
-                  ? 'bg-yellow-600 text-black shadow-lg shadow-yellow-900/20'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
+              className="relative px-4 md:px-6 py-2 rounded-lg font-bold text-xs md:text-sm transition-colors duration-300 outline-none"
             >
-              {mode.label}
+              {/* ADICIONADO: Pílula deslizante (Shared Layout Animation) */}
+              {gameMode === id && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-0 bg-yellow-600 rounded-lg shadow-lg shadow-yellow-900/40"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className={`relative z-10 transition-colors duration-300 ${
+                gameMode === id ? 'text-black' : 'text-gray-400 hover:text-white'
+              }`}>
+                {mode.label}
+              </span>
             </button>
           ))}
         </div>
@@ -146,34 +126,41 @@ export default function ScoreBoard({ onModeChange }: ScoreBoardProps) {
         <div className="flex gap-3">
           <button
             onClick={resetGame}
-            className="bg-zinc-800 hover:bg-red-900/40 text-red-500 px-4 py-2 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest border border-red-900/20"
+            className="bg-zinc-800 hover:bg-red-900/40 text-red-500 px-4 py-2 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest border border-red-900/20 active:scale-95"
           >
             Reset
           </button>
 
           <button
             onClick={handleFinishGame}
-            className="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-green-900/20"
+            className="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-green-900/20 active:scale-95"
           >
             Nova Partida
           </button>
         </div>
       </div>
 
-      {/* Grid de Placar */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {teams.map(team => (
-          <TeamColumn
-            key={team.id}
-            team={team}
-            gameMode={gameMode}
-            onAddPoints={(pts) => addPoints(team.id, pts)}
-            onNameChange={(name) => updateTeamName(team.id, name)}
-          />
-        ))}
-
-      </div>
+      {/* Grid de Placar com Transição de Entrada/Saída */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={gameMode} // Crucial para o AnimatePresence identificar a troca
+          initial={{ opacity: 0, y: 15, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, y: -15, filter: "blur(8px)" }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
+          {teams.map(team => (
+            <TeamColumn
+              key={team.id}
+              team={team}
+              gameMode={gameMode}
+              onAddPoints={(pts) => addPoints(team.id, pts)}
+              onNameChange={(name) => updateTeamName(team.id, name)}
+            />
+          ))}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
