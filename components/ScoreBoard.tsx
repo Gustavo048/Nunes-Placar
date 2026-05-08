@@ -76,11 +76,25 @@ export default function ScoreBoard({ onModeChange }: ScoreBoardProps) {
 
     if (confirm) {
       try {
-        const result = await recordVictory(winner.name, winner.score, gameMode);
+        const result = await recordVictory(
+        winner.score,
+        gameMode
+);
         if (result.success) {
-          setTeams(prev => prev.map(team => ({ ...team, score: 0, history: [] })));
-          alert("Partida registrada no Ranking!");
-        }
+            setTeams(prev =>
+              prev.map(team => ({
+                ...team,
+                score: 0,
+                history: [],
+              }))
+            );
+
+            alert("Partida registrada no Ranking!");
+
+          } else {
+
+            alert(result.message);
+          }
       } catch (error) {
         console.error("Falha ao salvar no ranking:", error);
         alert("Erro ao salvar no banco de dados.");

@@ -2,9 +2,13 @@
 
 export interface RankingItem {
   id: string;
-  teamName: string;
+
   victories: number;
   totalPoints: number;
+
+  user: {
+    name: string;
+  };
 }
 
 interface RankingPanelProps {
@@ -56,7 +60,7 @@ export default function RankingPanel({ data, activeMode }: RankingPanelProps) {
                 
                 <div>
                   <p className="text-white font-bold uppercase text-sm group-hover:text-yellow-500 transition-colors truncate max-w-37.5">
-                    {item.teamName}
+                    {item.user.name}
                   </p>
                   <p className="text-gray-500 text-[10px] uppercase tracking-tighter">
                     {item.totalPoints.toLocaleString()} PONTOS ACUMULADOS

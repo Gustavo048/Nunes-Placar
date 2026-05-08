@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import RankingPanel, { RankingItem } from "@/components/RankingPanel";
 import ScoreBoard from "@/components/ScoreBoard";
 import { getRanking } from './actions/ranking';
+import UserInfo from "@/components/UserInfo";
 
 
 export default function Home() {
@@ -54,6 +55,7 @@ export default function Home() {
             Florianópolis • SC
           </span>
         </div>
+        <UserInfo />
       </header>
 
       {/* GRID PRINCIPAL */}
