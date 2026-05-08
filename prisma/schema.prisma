@@ -1,26 +1,57 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "library"
 }
 
 datasource db {
   provider = "postgresql"
-  
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String      @id @default(cuid())
+  name        String
+  email       String      @unique
+  password    String
+
+  role        UserRole    @default(USER)
+  status      UserStatus  @default(PENDING)
+
+  rankings    Ranking[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model Ranking {
-  id          String   @id @default(cuid())
-  teamName    String
-  gameMode    GameMode   // ✅ agora tipado corretamente
-  victories   Int        @default(0)
-  totalPoints Int        @default(0)
-  updatedAt   DateTime   @updatedAt
+  id           String     @id @default(cuid())
 
-  @@unique([teamName, gameMode]) // ✅ ESSENCIAL pro upsert
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+
+  gameMode     GameMode
+
+  victories    Int        @default(0)
+  totalPoints  Int        @default(0)
+
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([userId, gameMode])
 }
 
 enum GameMode {
   CANASTRA
   TRUCO
   DOMINO
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
