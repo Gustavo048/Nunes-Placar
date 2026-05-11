@@ -13,7 +13,7 @@ export default function UserInfo() {
 
         <a
           href="/login"
-          className="text-sm text-white/70 hover:text-white transition"
+          className="text-sm text-white/90 hover:text-white transition"
         >
           Login
         </a>

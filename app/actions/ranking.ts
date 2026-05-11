@@ -3,27 +3,20 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { GameMode } from "@prisma/client";
-
 import { auth } from "@/app/auth";
 
 
-// =============================
 // BUSCAR RANKING
-// =============================
-
 export async function getRanking(
   gameMode: GameMode = "CANASTRA"
 ) {
 
-  try {
+  try {    
 
     const ranking = await prisma.ranking.findMany({
+
       where: {
         gameMode,
-      },
-
-      include: {
-        user: true,
       },
 
       orderBy: [
@@ -42,28 +35,23 @@ export async function getRanking(
 
   } catch (error) {
 
-    console.error("Erro ao buscar ranking:", error);
+    console.error("Erro ao salvar ranking:", JSON.stringify(error, null, 2));
 
     return [];
   }
 }
 
-
-// =============================
 // REGISTRAR VITÓRIA
-// =============================
 
 export async function recordVictory(
+  teamName: string,
   points: number,
   gameMode: GameMode
 ) {
 
   try {
-
-    // =============================
+   
     // VALIDA SESSÃO
-    // =============================
-
     const session = await auth();
 
     if (!session?.user) {
@@ -74,10 +62,7 @@ export async function recordVictory(
       };
     }
 
-
-    // =============================
     // VALIDA APROVAÇÃO
-    // =============================
 
     if (session.user.status !== "APPROVED") {
 
@@ -87,12 +72,22 @@ export async function recordVictory(
       };
     }
 
+    const normalizedTeamName = teamName
+      .trim()
+      .toUpperCase();
 
-    // =============================
-    // BUSCA USUÁRIO
-    // =============================
+    if (!normalizedTeamName) {
+
+      return {
+        success: false,
+        message: "Nome da equipe inválido",
+      };
+    }
+  
+    // BUSCA USUÁRIO  
 
     const user = await prisma.user.findUnique({
+
       where: {
         email: session.user.email!,
       },
@@ -104,23 +99,22 @@ export async function recordVictory(
         success: false,
         message: "Usuário não encontrado",
       };
-    }
-
-
-    // =============================
-    // UPSERT RANKING
-    // =============================
+    }    
 
     await prisma.ranking.upsert({
 
       where: {
-        userId_gameMode: {
-          userId: user.id,
+
+        teamName_gameMode: {
+
+          teamName: normalizedTeamName,
+
           gameMode,
         },
       },
 
       update: {
+
         victories: {
           increment: 1,
         },
@@ -128,9 +122,13 @@ export async function recordVictory(
         totalPoints: {
           increment: points,
         },
+       
+
+        userId: user.id,
       },
 
       create: {
+        teamName: normalizedTeamName,
         userId: user.id,
         gameMode,
         victories: 1,
@@ -138,13 +136,7 @@ export async function recordVictory(
       },
     });
 
-
-    // =============================
-    // REVALIDATE
-    // =============================
-
     revalidatePath("/");
-
 
     return {
       success: true,
@@ -156,7 +148,9 @@ export async function recordVictory(
 
     return {
       success: false,
-      message: "Erro interno ao salvar ranking",
+      message: error instanceof Error
+  ? error.message
+  : "Erro interno ao salvar ranking",
     };
   }
 }

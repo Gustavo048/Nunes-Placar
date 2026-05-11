@@ -77,6 +77,7 @@ export default function ScoreBoard({ onModeChange }: ScoreBoardProps) {
     if (confirm) {
       try {
         const result = await recordVictory(
+        winner.name,
         winner.score,
         gameMode
 );

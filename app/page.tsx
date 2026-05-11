@@ -35,16 +35,18 @@ export default function Home() {
 
       {/* HEADER */}
       <header className="w-full max-w-7xl mb-12 flex justify-between items-end border-b border-white/5 pb-8">
+        
+        {/* LOGO  */}
         <div className="flex flex-col">
           <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-none">
             NUNES <span className="text-yellow-500">PLACAR</span>
           </h1>
-          <p className="text-gray-400 text-[10px] mt-3 tracking-[0.4em] font-light uppercase">
+          <p className="text-gray-400 text-[12px] mt-3 tracking-[0.4em] font-light uppercase">
             Estatísticas em Tempo Real
           </p>
         </div>
         
-        <div className="text-right hidden md:block">
+        {/* <div className="text-right hidden md:block">
           <div className="flex items-center justify-end gap-2 mb-1">
             <span className="h-px w-6 bg-yellow-500/20" />
             <span className="text-gray-500 text-[10px] uppercase tracking-widest font-bold">
@@ -54,7 +56,7 @@ export default function Home() {
           <span className="text-yellow-600/50 text-[9px] uppercase tracking-widest">
             Florianópolis • SC
           </span>
-        </div>
+        </div> */}
         <UserInfo />
       </header>
 
