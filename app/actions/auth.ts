@@ -5,148 +5,254 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 
-
 export async function registerUser(data: {
   name: string;
   email: string;
   password: string;
 }) {
- 
-  // VERIFICA EMAIL EXISTENTE  
 
-  const existingUser = await prisma.user.findUnique({
+  try {
 
-    where: {
-      email: data.email,
-    },
-  });
+    /* NORMALIZAÇÃO */
 
- if (existingUser) {
+    const normalizedName =
+      data.name.trim();
 
-  return {
+    const normalizedEmail =
+      data.email
+        .trim()
+        .toLowerCase();
 
-    success: false,
-    message: "Email já cadastrado",
-  };
-}
+    const normalizedPassword =
+      data.password.trim();
 
-  const hashedPassword = await bcrypt.hash(
-    data.password,
-    10
-  );
+    /* VALIDAÇÕES BÁSICAS  */
+
+    if (
+      !normalizedName ||
+      !normalizedEmail ||
+      !normalizedPassword
+    ) {
+
+      return {
+        success: false,
+        message: "Preencha todos os campos",
+      };
+    }
+
+    /* valida tamanho nome  */
+
+    if (normalizedName.length < 3) {
+      return {
+        success: false,
+        message:
+          "Nome deve possuir ao menos 3 caracteres",
+      };
+    }
+
+    /* valida senha mínima */
+
+    if (normalizedPassword.length < 6) {
+
+      return {
+        success: false,
+        message:
+          "Senha deve possuir ao menos 6 caracteres",
+      };
+    }
+
+    /* EMAIL EXISTENTE */
+
+    const existingUser =
+      await prisma.user.findUnique({
+
+        where: {
+          email: normalizedEmail,
+        },
+      });
+
+    if (existingUser) {
+
+      return {
+        success: false,
+        message: "Email já cadastrado",
+      };
+    }
+
+    /* HASH SENHA  */
+
+    const hashedPassword =
+      await bcrypt.hash(
+        normalizedPassword,
+        10
+      );
+
+    /* TOKEN APROVAÇÃO  */
+
+    const approvalToken = uuid();
+
+    /* CRIA USUÁRIO  */
+
+    await prisma.user.create({
+      data: {
+        name: normalizedName,
+
+        /* salva email normalizado  */
+
+        email: normalizedEmail,
+        password: hashedPassword,
+        approvalToken,
+      },
+    });
+
+    if (!process.env.NEXTAUTH_URL) {
+      console.error(
+        "NEXTAUTH_URL não configurada"
+      );
+
+      return {
+        success: false,
+        message:
+          "Erro configuração servidor",
+      };
+    }
+
+    /* valida ADMIN_EMAIL   */
+
+    if (!process.env.ADMIN_EMAIL) {
+      console.error(
+        "ADMIN_EMAIL não configurado"
+      );
+
+      return {
+        success: false,
+        message:
+          "Erro configuração email admin",
+      };
+    }
+
+    /* LINKS ADMIN */
+
+    const approveUrl =
+      `${process.env.NEXTAUTH_URL}/api/admin/approve?token=${approvalToken}`;
+
+    const rejectUrl =
+      `${process.env.NEXTAUTH_URL}/api/admin/reject?token=${approvalToken}`;
 
 
-  const approvalToken = uuid();
+    /*  ENVIO EMAIL ADMIN  */
 
- 
-  // CRIA USUÁRIO
+    const emailResponse =
+      await resend.emails.send({
 
-  await prisma.user.create({
+        from:
+          'Nunes Placar <onboarding@resend.dev>',
 
-    data: {
-      name: data.name,
-      email: data.email,
-      password: hashedPassword, 
+        to:
+          process.env.ADMIN_EMAIL,
 
-      approvalToken,
-    },
-  });
+        subject:
+          'Nova solicitação de acesso',
 
-  /*  LINKS DE APROVAÇÃO  */
+        html: `
 
-  const approveUrl =
-    `${process.env.NEXTAUTH_URL}/api/admin/approve?token=${approvalToken}`;
-
-  const rejectUrl =
-    `${process.env.NEXTAUTH_URL}/api/admin/reject?token=${approvalToken}`;
-
-    // ENVIA EMAIL ADMIN  
-
-  await resend.emails.send({
-
-    from: 'Nunes Placar <onboarding@resend.dev>',
-    to: process.env.ADMIN_EMAIL!,
-    subject: 'Nova solicitação de acesso',
-
-    html: `
-
-      <div
-        style="
-          font-family:sans-serif;
-          padding:20px;
-        "
-      >
-
-        <h2
-          style="
-            margin-bottom:20px;
-          "
-        >
-          Nova solicitação de acesso
-        </h2>
-
-        <p>
-          Um novo usuário solicitou acesso ao sistema.
-        </p>
-
-        <hr style="margin:20px 0;" />
-
-        <p>
-          <strong>Nome:</strong>
-          ${data.name}
-        </p>
-
-        <p>
-          <strong>Email:</strong>
-          ${data.email}
-        </p>
-
-        <hr style="margin:20px 0;" />
-
-        <div style="margin-top:30px;">
-
-          <a
-            href="${approveUrl}"
-
+          <div
             style="
-              background:#16a34a;
-              color:white;
-              padding:12px 20px;
-              border-radius:8px;
-              text-decoration:none;
-              margin-right:10px;
-              display:inline-block;
-              font-weight:bold;
+              font-family:sans-serif;
+              padding:20px;
             "
           >
-            Aprovar
-          </a>
 
-          <a
-            href="${rejectUrl}"
+            <h2
+              style="
+                margin-bottom:20px;
+              "
+            >
+              Nova solicitação de acesso
+            </h2>
 
-            style="
-              background:#dc2626;
-              color:white;
-              padding:12px 20px;
-              border-radius:8px;
-              text-decoration:none;
-              display:inline-block;
-              font-weight:bold;
-            "
-          >
-            Recusar
-          </a>
+            <p>
+              Um novo usuário solicitou acesso ao sistema.
+            </p>
 
-        </div>
+            <hr style="margin:20px 0;" />
 
-      </div>
-    `,
-  });
- 
-  // SUCCESS 
+            <p>
+              <strong>Nome:</strong>
+              ${normalizedName}
+            </p>
 
-  return {
-    success: true,
-  };
+            <p>
+              <strong>Email:</strong>
+              ${normalizedEmail}
+            </p>
+
+            <hr style="margin:20px 0;" />
+
+            <div style="margin-top:30px;">
+
+              <a
+                href="${approveUrl}"
+
+                style="
+                  background:#16a34a;
+                  color:white;
+                  padding:12px 20px;
+                  border-radius:8px;
+                  text-decoration:none;
+                  margin-right:10px;
+                  display:inline-block;
+                  font-weight:bold;
+                "
+              >
+                Aprovar
+              </a>
+
+              <a
+                href="${rejectUrl}"
+
+                style="
+                  background:#dc2626;
+                  color:white;
+                  padding:12px 20px;
+                  border-radius:8px;
+                  text-decoration:none;
+                  display:inline-block;
+                  font-weight:bold;
+                "
+              >
+                Recusar
+              </a>
+            </div>
+          </div>
+        `,
+      });
+
+    console.log(
+      "RESEND RESPONSE:",
+      emailResponse
+    );
+
+
+    /* SUCCESS */
+
+    return {
+      success: true,
+      message:
+        "Solicitação enviada com sucesso",
+    };
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao registrar usuário:",
+      error
+    );
+
+    return {
+      success: false,
+      message:
+        "Erro interno ao criar conta",
+    };
+  }
 }
