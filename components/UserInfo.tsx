@@ -4,8 +4,7 @@ import { signOut, useSession } from "next-auth/react";
 
 export default function UserInfo() {
 
-  const { data: session } = useSession();
-  
+  const { data: session } = useSession();  
 
   if (!session?.user) {
     return (
@@ -24,7 +23,6 @@ export default function UserInfo() {
         >
           Registrar
         </a>
-
       </div>
     );
   }
@@ -52,7 +50,6 @@ export default function UserInfo() {
       >
         Sair
       </button>
-
     </div>
   );
 }
