@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { registerUser } from "../actions/auth";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
 
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,13 +17,20 @@ export default function RegisterPage() {
 
     try {
 
-      await registerUser({
-        name,
-        email,
-        password,
-      });
+      const result = await registerUser({
+  name,
+  email,
+  password,
+});
 
-      setMessage("Conta criada com sucesso!");
+if (result.success) {
+
+  alert(
+    "Solicitação enviada com sucesso! Aguarde aprovação do administrador."
+  );
+
+  router.push("/");
+}
 
     } catch (error) {
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; // ADICIONADO: Componentes de animação
+import { motion, AnimatePresence } from 'framer-motion';
 import TeamColumn from './TeamColumn';
 import { recordVictory } from '@/app/actions/ranking';
 
@@ -66,42 +66,93 @@ export default function ScoreBoard({ onModeChange }: ScoreBoardProps) {
     );
   };
 
-  const handleFinishGame = async () => {
-    const [teamA, teamB] = teams;
-    if (teamA.score === teamB.score) return alert("O jogo está empatado!");
-    if (teamA.score === 0 && teamB.score === 0) return alert("Inicie uma partida primeiro!");
+const handleFinishGame = async () => {
 
-    const winner = getWinner();
-    const confirm = window.confirm(`Finalizar partida de ${gameMode}? Vitória de ${winner.name}!`);
+  const [teamA, teamB] = teams;
 
-    if (confirm) {
-      try {
-        const result = await recordVictory(
-        winner.name,
-        winner.score,
-        gameMode
-);
-        if (result.success) {
-            setTeams(prev =>
-              prev.map(team => ({
-                ...team,
-                score: 0,
-                history: [],
-              }))
-            );
+  if (teamA.score === teamB.score) {
+    return alert("O jogo está empatado!");
+  }
 
-            alert("Partida registrada no Ranking!");
+  if (teamA.score === 0 && teamB.score === 0) {
+    return alert("Inicie uma partida primeiro!");
+  }
 
-          } else {
+  const winner = getWinner();
 
-            alert(result.message);
-          }
-      } catch (error) {
-        console.error("Falha ao salvar no ranking:", error);
-        alert("Erro ao salvar no banco de dados.");
-      }
+  const confirm = window.confirm(
+    `Finalizar partida de ${gameMode}? Vitória de ${winner.name}!`
+  );
+
+  if (!confirm) return;
+
+  try {
+
+    const result = await recordVictory(
+      winner.name,
+      winner.score,
+      gameMode
+    );
+
+    /*
+    ============================================
+    ALTERAÇÃO PRINCIPAL
+    --------------------------------------------
+    Agora o sistema SEMPRE reinicia a partida,
+    independente do ranking.
+    ============================================
+    */
+
+    setTeams(prev =>
+      prev.map(team => ({
+        ...team,
+        score: 0,
+        history: [],
+      }))
+    );
+
+    /*
+    ============================================
+    FEEDBACK
+    ============================================
+    */
+
+    if (result.success) {
+
+      alert("Partida registrada no Ranking!");
+
+    } else {
+
+      /*
+      Usuário pode continuar usando normalmente
+      mesmo sem salvar ranking
+      */
+
+      alert(result.message);
     }
-  };
+
+  } catch (error) {
+
+    console.error("Falha ao salvar no ranking:", error);
+
+    /*
+    ============================================
+    Mesmo com erro crítico:
+    partida reinicia
+    ============================================
+    */
+
+    setTeams(prev =>
+      prev.map(team => ({
+        ...team,
+        score: 0,
+        history: [],
+      }))
+    );
+
+    alert("Partida finalizada, mas ocorreu erro ao salvar ranking.");
+  }
+};
 
   const resetGame = () => {
     if (window.confirm("Deseja realmente zerar o placar da partida atual?")) {
@@ -121,7 +172,7 @@ export default function ScoreBoard({ onModeChange }: ScoreBoardProps) {
               onClick={() => setGameMode(id as GameMode)}
               className="relative px-4 md:px-6 py-2 rounded-lg font-bold text-xs md:text-sm transition-colors duration-300 outline-none"
             >
-              {/* ADICIONADO: Pílula deslizante (Shared Layout Animation) */}
+              
               {gameMode === id && (
                 <motion.div
                   layoutId="activeTab"
