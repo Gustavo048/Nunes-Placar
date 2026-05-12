@@ -17,6 +17,8 @@ model User {
   role        UserRole     @default(USER)
   status      UserStatus   @default(PENDING)
   approvalToken String?      @unique
+  resetPasswordToken String? @unique
+  resetPasswordExpiresAt DateTime?
   rankings    Ranking[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt

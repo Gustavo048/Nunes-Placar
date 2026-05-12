@@ -24,6 +24,8 @@ export default function RegisterPage() {
 });
 
 if (result.success) {
+  return alert(result.message);
+}
 
   alert(
     "Solicitação enviada com sucesso! Aguarde aprovação do administrador."
@@ -31,8 +33,7 @@ if (result.success) {
 
   router.push("/");
 }
-
-    } catch (error) {
+     catch (error) {
 
       if (error instanceof Error) {
         setMessage(error.message);

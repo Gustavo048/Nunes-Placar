@@ -21,10 +21,14 @@ export async function registerUser(data: {
     },
   });
 
-  if (existingUser) {
+ if (existingUser) {
 
-    throw new Error("Email já cadastrado");
-  }
+  return {
+
+    success: false,
+    message: "Email já cadastrado",
+  };
+}
 
   const hashedPassword = await bcrypt.hash(
     data.password,
@@ -47,7 +51,6 @@ export async function registerUser(data: {
       approvalToken,
     },
   });
-
 
   /*  LINKS DE APROVAÇÃO  */
 
