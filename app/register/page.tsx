@@ -7,6 +7,7 @@ import { useRouter }
 from "next/navigation";
 
 export default function RegisterPage() {
+
   const router = useRouter();
 
   const [name, setName] =
@@ -28,7 +29,11 @@ export default function RegisterPage() {
 
     try {
 
+      /* RESET MESSAGE */
+
       setMessage("");
+
+      /* LOADING */
 
       setLoading(true);
 
@@ -40,153 +45,304 @@ export default function RegisterPage() {
           password,
         });
 
+      /* ERRO */
+
       if (!result.success) {
+
         setMessage(
           result.message
         );
+
         return;
       }
+
+      /* SUCCESS */
 
       alert(
         "Solicitação enviada com sucesso! Aguarde aprovação do administrador."
       );
+
+      /* LIMPA FORM */
+
+      setName("");
+      setEmail("");
+      setPassword("");
+
+      /* REDIRECIONA */
 
       router.push("/");
 
     } catch (error) {
 
       console.error(error);
+
       setMessage(
         "Erro interno ao registrar"
       );
 
-    } finally {     
+    } finally {
+
       setLoading(false);
     }
   }
 
   return (
+
     <div
       className="
         min-h-screen
+
         flex
         items-center
         justify-center
+
         bg-black
+
         text-white
+
+        px-4
       "
     >
+
       <div
         className="
           w-full
           max-w-md
+
           bg-white/5
+
+          backdrop-blur-2xl
+
           p-8
+
           rounded-3xl
+
           border
           border-white/10
+
+          shadow-[0_0_50px_rgba(0,0,0,0.45)]
         "
       >
+
+        {/* TITLE */}
 
         <h1
           className="
             text-3xl
-            font-bold
-            mb-8
+            font-black
+
+            mb-2
           "
         >
           Criar Conta
         </h1>
 
-        <div className="space-y-4">
+        <p
+          className="
+            text-sm
+
+            text-white/40
+
+            mb-8
+          "
+        >
+          Solicite acesso ao sistema Nunes Placar
+        </p>
+
+        {/* FORM */}
+
+        <form
+          onSubmit={(e) => {
+
+            e.preventDefault();
+
+            if (!loading) {
+              handleRegister();
+            }
+          }}
+
+          className="space-y-4"
+        >
+
+          {/* NOME */}
 
           <input
             type="text"
+
             placeholder="Nome"
+
             value={name}
+
             onChange={(e) =>
               setName(e.target.value)
             }
 
+            disabled={loading}
+
             className="
               w-full
+
               p-4
+
               rounded-xl
-              bg-black
+
+              bg-black/60
+
               border
               border-white/10
+
+              outline-none
+
+              focus:border-yellow-500/50
+
+              transition-all
             "
           />
 
+          {/* EMAIL */}
+
           <input
             type="email"
+
             placeholder="Email"
+
             value={email}
+
             onChange={(e) =>
               setEmail(e.target.value)
             }
 
+            disabled={loading}
+
             className="
               w-full
+
               p-4
+
               rounded-xl
-              bg-black
+
+              bg-black/60
+
               border
               border-white/10
+
+              outline-none
+
+              focus:border-yellow-500/50
+
+              transition-all
             "
           />
+
+          {/* PASSWORD */}
 
           <input
             type="password"
+
             placeholder="Senha"
+
             value={password}
+
             onChange={(e) =>
               setPassword(e.target.value)
             }
+
+            disabled={loading}
+
             className="
               w-full
+
               p-4
+
               rounded-xl
-              bg-black
+
+              bg-black/60
+
               border
               border-white/10
+
+              outline-none
+
+              focus:border-yellow-500/50
+
+              transition-all
             "
           />
 
+          {/* BUTTON */}
+
           <button
-            onClick={handleRegister}
+
+            type="submit"
+
             disabled={loading}
+
             className="
               w-full
+
               p-4
+
               bg-yellow-500
+              hover:bg-yellow-400
+
               disabled:opacity-50
+              disabled:cursor-not-allowed
+
               text-black
+
               rounded-xl
-              font-bold
+
+              font-black
+
               transition-all
+
+              shadow-[0_0_25px_rgba(234,179,8,0.25)]
             "
           >
 
             {loading
               ? "Registrando..."
               : "Registrar"}
+
           </button>
+
+          {/* MESSAGE */}
 
           {message && (
 
-            <p
+            <div
               className="
-                text-sm
-                text-center
-                text-white/70
+                p-4
+
+                rounded-xl
+
+                bg-red-500/10
+
+                border
+                border-red-500/20
               "
             >
-              {message}
-            </p>
+
+              <p
+                className="
+                  text-sm
+                  text-center
+
+                  text-red-300
+                "
+              >
+                {message}
+              </p>
+
+            </div>
           )}
-        </div>
+
+        </form>
+
       </div>
+
     </div>
   );
 }
+
+

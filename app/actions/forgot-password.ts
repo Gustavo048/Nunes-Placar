@@ -12,14 +12,13 @@ export async function forgotPassword(
 
   try {
 
-    /* NORMALIZA EMAIL   */
+    /* NORMALIZA EMAIL */
 
     const normalizedEmail = email
       .trim()
       .toLowerCase();
 
-
-    /* BUSCA USUÁRIO   */
+    /* BUSCA USUÁRIO */
 
     const user = await prisma.user.findUnique({
       where: {
@@ -27,33 +26,33 @@ export async function forgotPassword(
       },
     });
 
-
-    /* SEGURANÇA - NÃO REVELA SE USUÁRIO EXISTE  */
+    /* SEGURANÇA - NÃO REVELA SE O EMAIL EXISTE */
 
     if (!user) {
+
       return {
         success: true,
       };
     }
 
-    /* TOKEN RESET  */
+    /* TOKEN RESET */
 
     const resetToken = uuid();
 
-
-    /*  EXPIRAÇÃO - 1 HORA */
+    /* EXPIRAÇÃO - 1 HORA */
 
     const expiresAt = new Date(
       Date.now() + 1000 * 60 * 60
     );
 
-
-    /* SALVA TOKEN  */
+    /* SALVA TOKEN */
 
     await prisma.user.update({
+
       where: {
         id: user.id,
       },
+
       data: {
         resetPasswordToken: resetToken,
         resetPasswordExpiresAt: expiresAt,
@@ -61,70 +60,92 @@ export async function forgotPassword(
     });
 
     /* URL RESET */
+
     const resetUrl =
       `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`;
 
-    /* EMAIL */
+    /* ENVIO EMAIL */
 
-    await resend.emails.send({
-      from: 'Nunes Placar <onboarding@resend.dev>',
-      to: user.email,
-      subject: 'Redefinição de senha',
+    try {
 
-      html: `
-        <div
-          style="
-            font-family:sans-serif;
-            padding:20px;
-          "
-        >
+      await resend.emails.send({
 
-          <h2>
-            Recuperação de senha
-          </h2>
+        from:
+          'Nunes Placar <onboarding@resend.dev>',
 
-          <p>
-            Recebemos uma solicitação para redefinir sua senha.
-          </p>
+        to:
+          user.email,
 
-          <p>
-            Clique no botão abaixo para continuar:
-          </p>
+        subject:
+          'Redefinição de senha',
 
-          <div style="margin-top:30px;">
-
-            <a
-              href="${resetUrl}"
-
-              style="
-                background:#eab308;
-                color:black;
-                padding:12px 20px;
-                border-radius:8px;
-                text-decoration:none;
-                font-weight:bold;
-                display:inline-block;
-              "
-            >
-              Redefinir senha
-            </a>
-
-          </div>
-
-          <p
+        html: `
+          <div
             style="
-              margin-top:30px;
-              color:#666;
-              font-size:14px;
+              font-family:sans-serif;
+              padding:20px;
             "
           >
-            Este link expira em 1 hora.
-          </p>
 
-        </div>
-      `,
-    });
+            <h2>
+              Recuperação de senha
+            </h2>
 
+            <p>
+              Recebemos uma solicitação para redefinir sua senha.
+            </p>
+
+            <p>
+              Clique no botão abaixo para continuar:
+            </p>
+
+            <div style="margin-top:30px;">
+
+              <a
+                href="${resetUrl}"
+
+                style="
+                  background:#eab308;
+                  color:black;
+                  padding:12px 20px;
+                  border-radius:8px;
+                  text-decoration:none;
+                  font-weight:bold;
+                  display:inline-block;
+                "
+              >
+                Redefinir senha
+              </a>
+
+            </div>
+
+            <p
+              style="
+                margin-top:30px;
+                color:#666;
+                font-size:14px;
+              "
+            >
+              Este link expira em 1 hora.
+            </p>
+
+          </div>
+        `,
+      });
+
+      console.log(
+        "EMAIL RESET ENVIADO"
+      );
+
+    } catch (emailError) {
+
+      console.error(
+        "Erro ao enviar email reset:",
+        emailError
+      );
+    }
+
+    /* SUCCESS */
 
     return {
       success: true,

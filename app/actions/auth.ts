@@ -54,12 +54,41 @@ export async function registerUser(data: {
       },
     });
 
-    if (existingUser) {
-      return {
-        success: false,
-        message: "Email já cadastrado",
-      };
-    }
+
+  if (existingUser) {
+
+  /* USUÁRIO APROVADO */
+
+  if (existingUser.status === "APPROVED") {
+
+    return {
+      success: false,
+      message: "Email já cadastrado",
+    };
+  }
+
+  /* AGUARDANDO APROVAÇÃO */
+
+  if (existingUser.status === "PENDING") {
+
+    return {
+      success: false,
+      message:
+        "Solicitação já enviada e aguardando aprovação",
+    };
+  }
+
+  /* RECUSADO → PERMITE NOVA SOLICITAÇÃO */
+
+  if (existingUser.status === "REJECTED") {
+
+    await prisma.user.delete({
+      where: {
+        id: existingUser.id,
+      },
+    });
+  }
+}
 
     /* HASH SENHA  */
 
@@ -83,8 +112,12 @@ export async function registerUser(data: {
       },
     });
 
-    if (!process.env._URL) {
-      console.error("NEXTAUTH_URL não configurada");
+   
+    if (!process.env.NEXTAUTH_URL) {
+
+      console.error(
+        "NEXTAUTH_URL não configurada"
+      );
 
       return {
         success: false,
@@ -108,104 +141,130 @@ export async function registerUser(data: {
     const approveUrl = `${process.env.NEXTAUTH_URL}/api/admin/approve?token=${approvalToken}`;
 
     const rejectUrl = `${process.env.NEXTAUTH_URL}/api/admin/reject?token=${approvalToken}`;
+    
+    /* ENVIO EMAIL ADMIN */
 
-    /*  ENVIO EMAIL ADMIN  */
+    try {
 
-    const emailResponse = await resend.emails.send({
-      from: "Nunes Placar <onboarding@resend.dev>",
+      const emailResponse =
+        await resend.emails.send({
 
-      to: process.env.ADMIN_EMAIL,
+          from:
+            "Nunes Placar <onboarding@resend.dev>",
 
-      subject: "Nova solicitação de acesso",
+          to:
+            process.env.ADMIN_EMAIL,
 
-      html: `
+          subject:
+            "Nova solicitação de acesso",
 
-          <div
-            style="
-              font-family:sans-serif;
-              padding:20px;
-            "
-          >
-
-            <h2
+          html: `
+            <div
               style="
-                margin-bottom:20px;
+                font-family:sans-serif;
+                padding:20px;
               "
             >
-              Nova solicitação de acesso
-            </h2>
 
-            <p>
-              Um novo usuário solicitou acesso ao sistema.
-            </p>
-
-            <hr style="margin:20px 0;" />
-
-            <p>
-              <strong>Nome:</strong>
-              ${normalizedName}
-            </p>
-
-            <p>
-              <strong>Email:</strong>
-              ${normalizedEmail}
-            </p>
-
-            <hr style="margin:20px 0;" />
-
-            <div style="margin-top:30px;">
-
-              <a
-                href="${approveUrl}"
-
+              <h2
                 style="
-                  background:#16a34a;
-                  color:white;
-                  padding:12px 20px;
-                  border-radius:8px;
-                  text-decoration:none;
-                  margin-right:10px;
-                  display:inline-block;
-                  font-weight:bold;
+                  margin-bottom:20px;
                 "
               >
-                Aprovar
-              </a>
+                Nova solicitação de acesso
+              </h2>
 
-              <a
-                href="${rejectUrl}"
+              <p>
+                Um novo usuário solicitou acesso ao sistema.
+              </p>
 
-                style="
-                  background:#dc2626;
-                  color:white;
-                  padding:12px 20px;
-                  border-radius:8px;
-                  text-decoration:none;
-                  display:inline-block;
-                  font-weight:bold;
-                "
-              >
-                Recusar
-              </a>
+              <hr style="margin:20px 0;" />
+
+              <p>
+                <strong>Nome:</strong>
+                ${normalizedName}
+              </p>
+
+              <p>
+                <strong>Email:</strong>
+                ${normalizedEmail}
+              </p>
+
+              <hr style="margin:20px 0;" />
+
+              <div style="margin-top:30px;">
+
+                <a
+                  href="${approveUrl}"
+
+                  style="
+                    background:#16a34a;
+                    color:white;
+                    padding:12px 20px;
+                    border-radius:8px;
+                    text-decoration:none;
+                    margin-right:10px;
+                    display:inline-block;
+                    font-weight:bold;
+                  "
+                >
+                  Aprovar
+                </a>
+
+                <a
+                  href="${rejectUrl}"
+
+                  style="
+                    background:#dc2626;
+                    color:white;
+                    padding:12px 20px;
+                    border-radius:8px;
+                    text-decoration:none;
+                    display:inline-block;
+                    font-weight:bold;
+                  "
+                >
+                  Recusar
+                </a>
+
+              </div>
+
             </div>
-          </div>
-        `,
-    });
+          `,
+        });
 
-    console.log("RESEND RESPONSE:", emailResponse);
+      console.log(
+        "RESEND RESPONSE:",
+        emailResponse
+      );
+
+    } catch (emailError) {
+
+      console.error(
+        "Erro ao enviar email:",
+        emailError
+      );
+    }
 
     /* SUCCESS */
 
     return {
       success: true,
-      message: "Solicitação enviada com sucesso",
+      message:
+        "Solicitação enviada com sucesso",
     };
+
   } catch (error) {
-    console.error("Erro ao registrar usuário:", error);
+
+    console.error(
+      "Erro ao registrar usuário:",
+      error
+    );
 
     return {
       success: false,
-      message: "Erro interno ao criar conta",
+      message:
+        "Erro interno ao criar conta",
     };
   }
 }
