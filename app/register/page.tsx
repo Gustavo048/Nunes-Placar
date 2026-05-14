@@ -7,9 +7,7 @@ import { useRouter }
 from "next/navigation";
 
 export default function RegisterPage() {
-
   const router = useRouter();
-
 
   const [name, setName] =
     useState("");

@@ -2,7 +2,7 @@
 
 import { resend } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 
 export async function registerUser(data: {
