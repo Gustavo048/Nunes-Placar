@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { registerUser }
 from "../actions/auth";
+
 import { useRouter }
 from "next/navigation";
 
@@ -10,8 +11,19 @@ export default function RegisterPage() {
 
   const router = useRouter();
 
+  /* STATES */
+
   const [name, setName] =
     useState("");
+
+  const [nickname, setNickname] =
+    useState("");
+
+  const [city, setCity] =
+    useState("");
+
+  const [favoriteGame, setFavoriteGame] = 
+  useState < "CANASTRA" | "TRUCO" | "DOMINO"  > ("CANASTRA");
 
   const [email, setEmail] =
     useState("");
@@ -25,15 +37,13 @@ export default function RegisterPage() {
   const [loading, setLoading] =
     useState(false);
 
+  /* REGISTER */
+
   async function handleRegister() {
 
     try {
 
-      /* RESET MESSAGE */
-
       setMessage("");
-
-      /* LOADING */
 
       setLoading(true);
 
@@ -41,11 +51,12 @@ export default function RegisterPage() {
         await registerUser({
 
           name,
+          nickname,
+          city,
+          favoriteGame,
           email,
           password,
         });
-
-      /* ERRO */
 
       if (!result.success) {
 
@@ -56,19 +67,20 @@ export default function RegisterPage() {
         return;
       }
 
-      /* SUCCESS */
-
       alert(
         "Solicitação enviada com sucesso! Aguarde aprovação do administrador."
       );
 
-      /* LIMPA FORM */
+      /* RESET FORM */
 
       setName("");
+      setNickname("");
+      setCity("");
+      setFavoriteGame("CANASTRA");
       setEmail("");
       setPassword("");
 
-      /* REDIRECIONA */
+      /* REDIRECT */
 
       router.push("/");
 
@@ -101,13 +113,14 @@ export default function RegisterPage() {
         text-white
 
         px-4
+        py-10
       "
     >
 
       <div
         className="
           w-full
-          max-w-md
+          max-w-xl
 
           bg-white/5
 
@@ -115,43 +128,49 @@ export default function RegisterPage() {
 
           p-8
 
-          rounded-3xl
+          rounded-[2rem]
 
           border
           border-white/10
 
-          shadow-[0_0_50px_rgba(0,0,0,0.45)]
+          shadow-[0_0_60px_rgba(0,0,0,0.45)]
         "
       >
 
-        {/* TITLE */}
+        {/* HEADER */}
 
-        <h1
-          className="
-            text-3xl
-            font-black
+        <div className="mb-8">
 
-            mb-2
-          "
-        >
-          Criar Conta
-        </h1>
+          <h1
+            className="
+              text-4xl
 
-        <p
-          className="
-            text-sm
+              font-black
 
-            text-white/40
+              mb-3
+            "
+          >
+            Criar Conta
+          </h1>
 
-            mb-8
-          "
-        >
-          Solicite acesso ao sistema Nunes Placar
-        </p>
+          <p
+            className="
+              text-white/40
+
+              leading-relaxed
+            "
+          >
+            Entre para o ranking oficial do
+            Nunes Placar e acompanhe suas
+            estatísticas em tempo real.
+          </p>
+
+        </div>
 
         {/* FORM */}
 
         <form
+
           onSubmit={(e) => {
 
             e.preventDefault();
@@ -169,7 +188,7 @@ export default function RegisterPage() {
           <input
             type="text"
 
-            placeholder="Nome"
+            placeholder="Nome completo"
 
             value={name}
 
@@ -184,7 +203,7 @@ export default function RegisterPage() {
 
               p-4
 
-              rounded-xl
+              rounded-2xl
 
               bg-black/60
 
@@ -198,6 +217,124 @@ export default function RegisterPage() {
               transition-all
             "
           />
+
+          {/* NICKNAME */}
+
+          <input
+            type="text"
+
+            placeholder="Apelido / Equipe"
+
+            value={nickname}
+
+            onChange={(e) =>
+              setNickname(e.target.value)
+            }
+
+            disabled={loading}
+
+            className="
+              w-full
+
+              p-4
+
+              rounded-2xl
+
+              bg-black/60
+
+              border
+              border-white/10
+
+              outline-none
+
+              focus:border-yellow-500/50
+
+              transition-all
+            "
+          />
+
+          {/* CITY */}
+
+          <input
+            type="text"
+
+            placeholder="Cidade"
+
+            value={city}
+
+            onChange={(e) =>
+              setCity(e.target.value)
+            }
+
+            disabled={loading}
+
+            className="
+              w-full
+
+              p-4
+
+              rounded-2xl
+
+              bg-black/60
+
+              border
+              border-white/10
+
+              outline-none
+
+              focus:border-yellow-500/50
+
+              transition-all
+            "
+          />
+
+          {/* FAVORITE GAME */}
+
+          <select
+
+            value={favoriteGame}
+
+            onChange={(e) =>
+              setFavoriteGame(
+                e.target.value as "CANASTRA" | "TRUCO" | "DOMINO"
+              )
+            }
+
+            disabled={loading}
+
+            className="
+              w-full
+
+              p-4
+
+              rounded-2xl
+
+              bg-black/60
+
+              border
+              border-white/10
+
+              outline-none
+
+              focus:border-yellow-500/50
+
+              transition-all
+            "
+          >
+
+            <option value="CANASTRA">
+              Canastra
+            </option>
+
+            <option value="TRUCO">
+              Truco
+            </option>
+
+            <option value="DOMINO">
+              Dominó
+            </option>
+
+          </select>
 
           {/* EMAIL */}
 
@@ -219,7 +356,7 @@ export default function RegisterPage() {
 
               p-4
 
-              rounded-xl
+              rounded-2xl
 
               bg-black/60
 
@@ -254,7 +391,7 @@ export default function RegisterPage() {
 
               p-4
 
-              rounded-xl
+              rounded-2xl
 
               bg-black/60
 
@@ -282,6 +419,8 @@ export default function RegisterPage() {
 
               p-4
 
+              mt-2
+
               bg-yellow-500
               hover:bg-yellow-400
 
@@ -290,7 +429,7 @@ export default function RegisterPage() {
 
               text-black
 
-              rounded-xl
+              rounded-2xl
 
               font-black
 
@@ -302,7 +441,7 @@ export default function RegisterPage() {
 
             {loading
               ? "Registrando..."
-              : "Registrar"}
+              : "Solicitar acesso"}
 
           </button>
 
@@ -314,7 +453,7 @@ export default function RegisterPage() {
               className="
                 p-4
 
-                rounded-xl
+                rounded-2xl
 
                 bg-red-500/10
 
@@ -326,6 +465,7 @@ export default function RegisterPage() {
               <p
                 className="
                   text-sm
+
                   text-center
 
                   text-red-300
@@ -344,5 +484,6 @@ export default function RegisterPage() {
     </div>
   );
 }
+
 
 

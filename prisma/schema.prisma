@@ -8,18 +8,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
+
   id          String       @id @default(cuid())
   name        String
   email       String       @unique
   password    String
   role        UserRole     @default(USER)
   status      UserStatus   @default(PENDING)
+
+  /* PERFIL */
+  nickname    String?
+  city        String?
+  favoriteGame GameMode?
+  avatarUrl   String?
+  bio         String?
+
+  /* TOKENS */
   approvalToken String?      @unique
   resetPasswordToken String? @unique
   resetPasswordExpiresAt DateTime?
+
+  /* RELAÇÕES */
   rankings    Ranking[]
+
+  /* TIMESTAMPS */
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
@@ -58,4 +71,12 @@ enum UserStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model GuestUsage {
+  id          String   @id @default(cuid())
+  guestId     String   @unique
+  gamesPlayed Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

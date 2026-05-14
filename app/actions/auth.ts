@@ -5,11 +5,14 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 
-export async function registerUser(data: {
-  name: string;
-  email: string;
-  password: string;
-}) {
+export async function registerUser(data: 
+  { name: string; 
+    nickname: string; 
+    city: string; 
+    favoriteGame: "CANASTRA" | "TRUCO" | "DOMINO"; 
+    email: string; 
+    password: string; }) {
+
   try {
     /* NORMALIZAÇÃO */
 
@@ -18,6 +21,10 @@ export async function registerUser(data: {
     const normalizedEmail = data.email.trim().toLowerCase();
 
     const normalizedPassword = data.password.trim();
+
+    const normalizedNickname = data.nickname.trim();
+
+    const normalizedCity = data.city.trim();
 
     /* VALIDAÇÕES BÁSICAS  */
 
@@ -72,7 +79,7 @@ export async function registerUser(data: {
   if (existingUser.status === "PENDING") {
 
     return {
-      success: false,
+      success: true,
       message:
         "Solicitação já enviada e aguardando aprovação",
     };
@@ -103,15 +110,14 @@ export async function registerUser(data: {
     await prisma.user.create({
       data: {
         name: normalizedName,
-
-        /* salva email normalizado  */
-
+        nickname: normalizedNickname,
+        city: normalizedCity,
+        favoriteGame: data.favoriteGame,
         email: normalizedEmail,
         password: hashedPassword,
         approvalToken,
       },
     });
-
    
     if (!process.env.NEXTAUTH_URL) {
 
