@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { resend } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
@@ -10,30 +10,18 @@ export async function registerUser(data: {
   email: string;
   password: string;
 }) {
-
   try {
-
     /* NORMALIZAÇÃO */
 
-    const normalizedName =
-      data.name.trim();
+    const normalizedName = data.name.trim();
 
-    const normalizedEmail =
-      data.email
-        .trim()
-        .toLowerCase();
+    const normalizedEmail = data.email.trim().toLowerCase();
 
-    const normalizedPassword =
-      data.password.trim();
+    const normalizedPassword = data.password.trim();
 
     /* VALIDAÇÕES BÁSICAS  */
 
-    if (
-      !normalizedName ||
-      !normalizedEmail ||
-      !normalizedPassword
-    ) {
-
+    if (!normalizedName || !normalizedEmail || !normalizedPassword) {
       return {
         success: false,
         message: "Preencha todos os campos",
@@ -45,34 +33,28 @@ export async function registerUser(data: {
     if (normalizedName.length < 3) {
       return {
         success: false,
-        message:
-          "Nome deve possuir ao menos 3 caracteres",
+        message: "Nome deve possuir ao menos 3 caracteres",
       };
     }
 
     /* valida senha mínima */
 
     if (normalizedPassword.length < 6) {
-
       return {
         success: false,
-        message:
-          "Senha deve possuir ao menos 6 caracteres",
+        message: "Senha deve possuir ao menos 6 caracteres",
       };
     }
 
     /* EMAIL EXISTENTE */
 
-    const existingUser =
-      await prisma.user.findUnique({
-
-        where: {
-          email: normalizedEmail,
-        },
-      });
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: normalizedEmail,
+      },
+    });
 
     if (existingUser) {
-
       return {
         success: false,
         message: "Email já cadastrado",
@@ -81,11 +63,7 @@ export async function registerUser(data: {
 
     /* HASH SENHA  */
 
-    const hashedPassword =
-      await bcrypt.hash(
-        normalizedPassword,
-        10
-      );
+    const hashedPassword = await bcrypt.hash(normalizedPassword, 10);
 
     /* TOKEN APROVAÇÃO  */
 
@@ -105,56 +83,42 @@ export async function registerUser(data: {
       },
     });
 
-    if (!process.env.NEXTAUTH_URL) {
-      console.error(
-        "NEXTAUTH_URL não configurada"
-      );
+    if (!process.env._URL) {
+      console.error("NEXTAUTH_URL não configurada");
 
       return {
         success: false,
-        message:
-          "Erro configuração servidor",
+        message: "Erro configuração servidor",
       };
     }
 
     /* valida ADMIN_EMAIL   */
 
     if (!process.env.ADMIN_EMAIL) {
-      console.error(
-        "ADMIN_EMAIL não configurado"
-      );
+      console.error("ADMIN_EMAIL não configurado");
 
       return {
         success: false,
-        message:
-          "Erro configuração email admin",
+        message: "Erro configuração email admin",
       };
     }
 
     /* LINKS ADMIN */
 
-    const approveUrl =
-      `${process.env.NEXTAUTH_URL}/api/admin/approve?token=${approvalToken}`;
+    const approveUrl = `${process.env.NEXTAUTH_URL}/api/admin/approve?token=${approvalToken}`;
 
-    const rejectUrl =
-      `${process.env.NEXTAUTH_URL}/api/admin/reject?token=${approvalToken}`;
-
+    const rejectUrl = `${process.env.NEXTAUTH_URL}/api/admin/reject?token=${approvalToken}`;
 
     /*  ENVIO EMAIL ADMIN  */
 
-    const emailResponse =
-      await resend.emails.send({
+    const emailResponse = await resend.emails.send({
+      from: "Nunes Placar <onboarding@resend.dev>",
 
-        from:
-          'Nunes Placar <onboarding@resend.dev>',
+      to: process.env.ADMIN_EMAIL,
 
-        to:
-          process.env.ADMIN_EMAIL,
+      subject: "Nova solicitação de acesso",
 
-        subject:
-          'Nova solicitação de acesso',
-
-        html: `
+      html: `
 
           <div
             style="
@@ -226,33 +190,22 @@ export async function registerUser(data: {
             </div>
           </div>
         `,
-      });
+    });
 
-    console.log(
-      "RESEND RESPONSE:",
-      emailResponse
-    );
-
+    console.log("RESEND RESPONSE:", emailResponse);
 
     /* SUCCESS */
 
     return {
       success: true,
-      message:
-        "Solicitação enviada com sucesso",
+      message: "Solicitação enviada com sucesso",
     };
-
   } catch (error) {
-
-    console.error(
-      "Erro ao registrar usuário:",
-      error
-    );
+    console.error("Erro ao registrar usuário:", error);
 
     return {
       success: false,
-      message:
-        "Erro interno ao criar conta",
+      message: "Erro interno ao criar conta",
     };
   }
 }
