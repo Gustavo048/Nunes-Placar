@@ -42,7 +42,6 @@ export default function Home() {
 
 
   return (
-
     <main
       className="
         min-h-screen
@@ -70,7 +69,6 @@ export default function Home() {
         }}
       />
 
-
       {/* DARK OVERLAY */}
 
       <div
@@ -87,9 +85,7 @@ export default function Home() {
       />
 
 
-      {/* ============================================
-          MAIN CONTAINER
-      ============================================ */}
+      {/* MAIN CONTAINER */}
 
       <div
         className="
@@ -126,15 +122,13 @@ export default function Home() {
           "
         >
 
-          {/* ============================================
-              SCOREBOARD AREA
-          ============================================ */}
+          {/* SCOREBOARD AREA */}
 
           <section className="w-full">
 
             <div
               className="
-                bg-white/[0.03]
+                bg-white/3
 
                 border
                 border-white/10
@@ -157,34 +151,22 @@ export default function Home() {
 
             </div>
 
+            {/*  STATUS BAR */}
 
-            {/* ============================================
-                STATUS BAR
-            ============================================ */}
-
-            <div
+            {/* <div
               className="
                 mt-6
-
                 flex
                 items-center
-
                 gap-3
-
                 w-fit
-
                 px-4
                 py-3
-
                 rounded-2xl
-
-                bg-white/[0.03]
-
+                bg-white/3
                 border
                 border-white/10
-
                 backdrop-blur-xl
-
                 shadow-[0_0_30px_rgba(0,0,0,0.35)]
               "
             >
@@ -193,11 +175,8 @@ export default function Home() {
                 className="
                   w-2
                   h-2
-
                   rounded-full
-
                   bg-green-500
-
                   animate-pulse
                 "
               />
@@ -205,13 +184,9 @@ export default function Home() {
               <span
                 className="
                   text-[10px]
-
                   uppercase
-
                   tracking-[0.3em]
-
                   text-white/40
-
                   font-black
                 "
               >
@@ -221,21 +196,17 @@ export default function Home() {
               <span
                 className="
                   text-[10px]
-
                   uppercase
-
                   tracking-[0.3em]
-
                   text-yellow-500
-
                   font-black
                 "
               >
                 {activeGameMode}
               </span>
-            </div>
-          </section>
+            </div> */}
 
+          </section>
 
           {/* RANKING SIDEBAR */}
 
@@ -250,7 +221,7 @@ export default function Home() {
 
             <div
               className="
-                bg-white/[0.03]
+                bg-white/3
 
                 border
                 border-white/10
@@ -320,7 +291,6 @@ export default function Home() {
             >
               Nunes Placar © 2026
             </p>
-
 
             <div
               className="

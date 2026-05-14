@@ -49,7 +49,7 @@ const RankingCard = ({ item, index }: { item: RankingItem; index: number }) => (
       </span>
 
       <div>
-        <p className="text-white uppercase text-sm group-hover:text-yellow-400 transition-colors truncate max-w-[150px]">
+        <p className="text-white uppercase text-sm group-hover:text-yellow-400 transition-colors truncate max-w-37">
           {item.teamName}
         </p>
         <p className="text-gray-400 text-[13px] uppercase tracking-tighter">

@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-
 import { compare } from "bcrypt";
 import { prisma } from "@/lib/prisma";
 
@@ -91,9 +90,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     if (session.user) {
 
       session.user.id = token.sub as string;
-
       session.user.role = token.role as string;
-
       session.user.status = token.status as string;
     }
 

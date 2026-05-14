@@ -41,7 +41,6 @@ export default function UserInfo() {
             ? "Aguardando aprovação"
             : "Conta aprovada"}
         </p>
-
       </div>
 
       <button

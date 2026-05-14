@@ -94,14 +94,7 @@ const handleFinishGame = async () => {
       gameMode
     );
 
-    /*
-    ============================================
-    ALTERAÇÃO PRINCIPAL
-    --------------------------------------------
-    Agora o sistema SEMPRE reinicia a partida,
-    independente do ranking.
-    ============================================
-    */
+    /* reinicia a partida, independente do ranking. */
 
     setTeams(prev =>
       prev.map(team => ({
@@ -111,11 +104,7 @@ const handleFinishGame = async () => {
       }))
     );
 
-    /*
-    ============================================
-    FEEDBACK
-    ============================================
-    */
+    /* FEEDBACK  */
 
     if (result.success) {
 
@@ -123,10 +112,7 @@ const handleFinishGame = async () => {
 
     } else {
 
-      /*
-      Usuário pode continuar usando normalmente
-      mesmo sem salvar ranking
-      */
+      /*  mesmo sem salvar ranking  */
 
       alert(result.message);
     }
@@ -135,12 +121,7 @@ const handleFinishGame = async () => {
 
     console.error("Falha ao salvar no ranking:", error);
 
-    /*
-    ============================================
-    Mesmo com erro crítico:
-    partida reinicia
-    ============================================
-    */
+    /*  Mesmo com erro:  partida reinicia  */
 
     setTeams(prev =>
       prev.map(team => ({
@@ -209,7 +190,7 @@ const handleFinishGame = async () => {
       {/* Grid de Placar com Transição de Entrada/Saída */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={gameMode} // Crucial para o AnimatePresence identificar a troca
+          key={gameMode}
           initial={{ opacity: 0, y: 15, filter: "blur(8px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           exit={{ opacity: 0, y: -15, filter: "blur(8px)" }}
