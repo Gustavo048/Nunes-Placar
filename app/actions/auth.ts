@@ -5,14 +5,14 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 
-export async function registerUser(data: 
-  { name: string; 
-    nickname: string; 
-    city: string; 
-    favoriteGame: "CANASTRA" | "TRUCO" | "DOMINO"; 
-    email: string; 
-    password: string; }) {
-
+export async function registerUser(data: {
+  name: string;
+  nickname: string;
+  city: string;
+  favoriteGame: "CANASTRA" | "TRUCO" | "DOMINO";
+  email: string;
+  password: string;
+}) {
   try {
     /* NORMALIZAÇÃO */
 
@@ -61,41 +61,35 @@ export async function registerUser(data:
       },
     });
 
+    if (existingUser) {
+      /* USUÁRIO APROVADO */
 
-  if (existingUser) {
+      if (existingUser.status === "APPROVED") {
+        return {
+          success: false,
+          message: "Email já cadastrado",
+        };
+      }
 
-  /* USUÁRIO APROVADO */
+      /* AGUARDANDO APROVAÇÃO */
 
-  if (existingUser.status === "APPROVED") {
+      if (existingUser.status === "PENDING") {
+        return {
+          success: true,
+          message: "Solicitação já enviada e aguardando aprovação",
+        };
+      }
 
-    return {
-      success: false,
-      message: "Email já cadastrado",
-    };
-  }
+      /* RECUSADO → PERMITE NOVA SOLICITAÇÃO */
 
-  /* AGUARDANDO APROVAÇÃO */
-
-  if (existingUser.status === "PENDING") {
-
-    return {
-      success: true,
-      message:
-        "Solicitação já enviada e aguardando aprovação",
-    };
-  }
-
-  /* RECUSADO → PERMITE NOVA SOLICITAÇÃO */
-
-  if (existingUser.status === "REJECTED") {
-
-    await prisma.user.delete({
-      where: {
-        id: existingUser.id,
-      },
-    });
-  }
-}
+      if (existingUser.status === "REJECTED") {
+        await prisma.user.delete({
+          where: {
+            id: existingUser.id,
+          },
+        });
+      }
+    }
 
     /* HASH SENHA  */
 
@@ -118,12 +112,9 @@ export async function registerUser(data:
         approvalToken,
       },
     });
-   
-    if (!process.env.NEXTAUTH_URL) {
 
-      console.error(
-        "NEXTAUTH_URL não configurada"
-      );
+    if (!process.env.NEXTAUTH_URL) {
+      console.error("NEXTAUTH_URL não configurada");
 
       return {
         success: false,
@@ -147,130 +138,113 @@ export async function registerUser(data:
     const approveUrl = `${process.env.NEXTAUTH_URL}/api/admin/approve?token=${approvalToken}`;
 
     const rejectUrl = `${process.env.NEXTAUTH_URL}/api/admin/reject?token=${approvalToken}`;
-    
+
     /* ENVIO EMAIL ADMIN */
 
     try {
+      if (resend) {
+        const emailResponse = await resend.emails.send({
+          from: "Nunes Placar <onboarding@resend.dev>",
 
-      const emailResponse =
-        await resend.emails.send({
+          to: process.env.ADMIN_EMAIL,
 
-          from:
-            "Nunes Placar <onboarding@resend.dev>",
-
-          to:
-            process.env.ADMIN_EMAIL,
-
-          subject:
-            "Nova solicitação de acesso",
+          subject: "Nova solicitação de acesso",
 
           html: `
-            <div
+          <div
+            style="
+              font-family:sans-serif;
+              padding:20px;
+            "
+          >
+
+            <h2
               style="
-                font-family:sans-serif;
-                padding:20px;
+                margin-bottom:20px;
               "
             >
+              Nova solicitação de acesso
+            </h2>
 
-              <h2
+            <p>
+              Um novo usuário solicitou acesso ao sistema.
+            </p>
+
+            <hr style="margin:20px 0;" />
+
+            <p>
+              <strong>Nome:</strong>
+              ${normalizedName}
+            </p>
+
+            <p>
+              <strong>Email:</strong>
+              ${normalizedEmail}
+            </p>
+
+            <hr style="margin:20px 0;" />
+
+            <div style="margin-top:30px;">
+
+              <a
+                href="${approveUrl}"
+
                 style="
-                  margin-bottom:20px;
+                  background:#16a34a;
+                  color:white;
+                  padding:12px 20px;
+                  border-radius:8px;
+                  text-decoration:none;
+                  margin-right:10px;
+                  display:inline-block;
+                  font-weight:bold;
                 "
               >
-                Nova solicitação de acesso
-              </h2>
+                Aprovar
+              </a>
 
-              <p>
-                Um novo usuário solicitou acesso ao sistema.
-              </p>
+              <a
+                href="${rejectUrl}"
 
-              <hr style="margin:20px 0;" />
-
-              <p>
-                <strong>Nome:</strong>
-                ${normalizedName}
-              </p>
-
-              <p>
-                <strong>Email:</strong>
-                ${normalizedEmail}
-              </p>
-
-              <hr style="margin:20px 0;" />
-
-              <div style="margin-top:30px;">
-
-                <a
-                  href="${approveUrl}"
-
-                  style="
-                    background:#16a34a;
-                    color:white;
-                    padding:12px 20px;
-                    border-radius:8px;
-                    text-decoration:none;
-                    margin-right:10px;
-                    display:inline-block;
-                    font-weight:bold;
-                  "
-                >
-                  Aprovar
-                </a>
-
-                <a
-                  href="${rejectUrl}"
-
-                  style="
-                    background:#dc2626;
-                    color:white;
-                    padding:12px 20px;
-                    border-radius:8px;
-                    text-decoration:none;
-                    display:inline-block;
-                    font-weight:bold;
-                  "
-                >
-                  Recusar
-                </a>
-
-              </div>
+                style="
+                  background:#dc2626;
+                  color:white;
+                  padding:12px 20px;
+                  border-radius:8px;
+                  text-decoration:none;
+                  display:inline-block;
+                  font-weight:bold;
+                "
+              >
+                Recusar
+              </a>
 
             </div>
-          `,
+
+          </div>
+        `,
         });
 
-      console.log(
-        "RESEND RESPONSE:",
-        emailResponse
-      );
-
+        console.log("RESEND RESPONSE:", emailResponse);
+      } else {
+        console.warn("Resend não configurado");
+      }
     } catch (emailError) {
-
-      console.error(
-        "Erro ao enviar email:",
-        emailError
-      );
+      console.error("Erro ao enviar email:", emailError);
     }
 
     /* SUCCESS */
 
     return {
       success: true,
-      message:
-        "Solicitação enviada com sucesso",
+      message: "Solicitação enviada com sucesso",
     };
-
   } catch (error) {
-
-    console.error(
-      "Erro ao registrar usuário:",
-      error
-    );
+    console.error("Erro ao registrar usuário:", error);
 
     return {
       success: false,
-      message:
-        "Erro interno ao criar conta",
+      message: "Erro interno ao criar conta",
     };
   }
 }

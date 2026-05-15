@@ -339,7 +339,7 @@ const remainingGames =
       items-center
       justify-between
       gap-4
-      px-4
+      px-3
       md:px-5
       py-3
       rounded-[1.4rem]
@@ -371,7 +371,6 @@ const remainingGames =
         min-w-0
       "
     >
-
       <div
         className={`
           w-2
@@ -386,13 +385,12 @@ const remainingGames =
           }
         `}
       />
-
       <div className="leading-tight">
         <p
           className="
             text-[10px]
             uppercase
-            tracking-[0.35em]
+            tracking-[0.2em] md:tracking-[0.35em]
             text-white/35
             font-black
           "
