@@ -66,9 +66,16 @@ export async function forgotPassword(
 
     /* ENVIO EMAIL */
 
-    try {
+    try {      
+        if (!resend) {
 
-      await resend.emails.send({
+          return {
+            success: false,
+            message: "Serviço de email indisponível",
+          };
+        }
+
+        await resend.emails.send({
 
         from:
           'Nunes Placar <onboarding@resend.dev>',
