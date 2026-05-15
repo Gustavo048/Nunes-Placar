@@ -449,23 +449,27 @@ const remainingGames =
 )}
 
       {/* TOOLBAR */}
+      
+<div
+  className="
+    flex
+    flex-wrap
+   
+    justify-center 
+    md:justify-between
 
-      <div
-        className="
-          flex
-          flex-wrap
-          justify-between
-          items-center
-          gap-4
-          mb-8
-          bg-black/40
-          p-4
-          rounded-2xl
-          backdrop-blur-md
-          border
-          border-white/10
-        "
-      >
+    items-center
+    gap-4
+    mb-5
+    bg-black/30
+    px-4
+    py-3
+    rounded-[1.7rem]
+    border
+    border-white/5
+    backdrop-blur-md
+  "
+>
 
         {/* GAME MODES */}
 
@@ -653,7 +657,8 @@ const remainingGames =
             grid-cols-1
             md:grid-cols-2
 
-            gap-6
+            gap-4
+            md:gap-6
           "
         >
 

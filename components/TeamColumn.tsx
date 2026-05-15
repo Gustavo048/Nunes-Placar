@@ -1,11 +1,21 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 
 interface TeamProps {
-  team: { name: string; score: number; history: number[] };
-  gameMode: "TRUCO" | "CANASTRA" | "DOMINO";
+  team: {
+    name: string;
+    score: number;
+    history: number[];
+  };
+
+  gameMode:
+    "TRUCO" |
+    "CANASTRA" |
+    "DOMINO";
+
   onAddPoints: (pts: number) => void;
+
   onNameChange: (name: string) => void;
 }
 
@@ -15,50 +25,88 @@ export default function TeamColumn({
   onAddPoints,
   onNameChange,
 }: TeamProps) {
-  const [val, setVal] = useState("");
+
+  const [val, setVal] =
+    useState("");
+
+  /* ACTION */
 
   const handleAction = () => {
-    const points = parseInt(val);
+
+    const points =
+      parseInt(val);
 
     if (!isNaN(points)) {
+
       onAddPoints(points);
+
       setVal("");
     }
   };
 
-  // ATALHOS TRUCO
+  /* TRUCO SHORTCUTS */
 
-  const trucoShortcuts = [1, 3, 6, 9, 12];
+  const trucoShortcuts = [
+    1,
+    3,
+    6,
+    9,
+    12
+  ];
 
   return (
+
     <div
       className="
-      bg-black/30
-      backdrop-blur-xl
-      border
-      border-white/10
-      rounded-[2rem]
-      p-6
-      md:p-8
-      flex
-      flex-col
-      items-center
-      shadow-2xl
-      transition-all
-      hover:border-white/20
-    "
-    >
-      {/*  NOME DA EQUIPE  */}
+        bg-black/30
+        backdrop-blur-xl
+        border
+        border-white/10
+        
+        rounded-[1.4rem]
+        md:rounded-[1.7rem]
 
-      <div className="w-full relative group">
+        p-3
+        xl:p-5
+        md:p-4
+        flex
+        flex-col
+        items-center
+        shadow-2xl
+        transition-all
+        hover:border-white/20
+      "
+    >
+
+      {/* TEAM NAME */}
+
+      <div
+        className="
+          w-full
+          relative
+          group
+        "
+      >
+
         <input
           type="text"
+
           value={team.name}
-          onChange={(e) => onNameChange(e.target.value)}
+
+          onChange={(e) =>
+            onNameChange(
+              e.target.value
+            )
+          }
+
           className="
             bg-transparent
-            text-2xl
-            md:text-3xl
+            
+            text-xl
+            md:text-2xl
+            xl:text-3xl
+
+
             font-black
             text-center
             text-white
@@ -66,68 +114,97 @@ export default function TeamColumn({
             border-transparent
             focus:border-yellow-500
             outline-none
-            mb-6
+            mb-5
             w-full
             uppercase
-            tracking-widest
+            tracking-[0.2em]
             transition-all
             placeholder:text-white/20
           "
-          placeholder="NOME DA EQUIPE"
+
+          placeholder="
+            NOME DA EQUIPE
+          "
         />
 
         <div
           className="
-          absolute
-          bottom-6
-          left-0        
-          w-full
-          h-px
-          bg-white/5
-          group-focus-within:hidden
-        "
+            absolute
+            bottom-5
+            left-0
+            w-full
+            h-px
+            bg-white/5
+            group-focus-within:hidden
+          "
         />
+
       </div>
 
-      {/*  PLACAR PRINCIPAL  */}
+      {/* MAIN SCORE */}
 
       <div className="relative">
+
         <div
-          className="
-          text-7xl
-          md:text-8xl
-          font-black
-          text-white
-          drop-shadow-[0_0_25px_rgba(255,255,255,0.2)]
-          my-4
-          tabular-nums
-        "
+          className="            
+           
+            text-[56px]
+            md:text-[68px]
+            xl:text-[82px]
+            leading-none
+            font-black
+            text-white
+            drop-shadow-[0_0_25px_rgba(255,255,255,0.18)]
+            my-2
+            tabular-nums
+          "
         >
           {team.score}
         </div>
+
       </div>
 
-      {/*  AÇÕES */}
+      {/* ACTIONS */}
 
-      <div className="w-full mt-6">
-        {/*  TRUCO SHORTCUTS  */}
+      <div
+        className="
+          w-full
+          mt-5
+        "
+      >
+
+        {/* TRUCO SHORTCUTS */}
 
         {gameMode === "TRUCO" && (
-          <div className="grid grid-cols-5 gap-2 mb-4">
+
+          <div
+            className="
+              grid
+              grid-cols-5
+              gap-2
+              mb-4
+            "
+          >
+
             {trucoShortcuts.map((pts) => (
+
               <button
                 key={pts}
-                onClick={() => onAddPoints(pts)}
+
+                onClick={() =>
+                  onAddPoints(pts)
+                }
+
                 className="
                   bg-white/5
                   hover:bg-yellow-600
                   hover:text-black
                   border
                   border-white/10
-                  py-3
+                  py-2.5
                   rounded-xl
-                  text-xs
-                  font-black                  
+                  text-[11px]
+                  font-black
                   text-white
                   transition-all
                   active:scale-95
@@ -139,39 +216,65 @@ export default function TeamColumn({
           </div>
         )}
 
-        {/*  INPUT  */}
+        {/* INPUT + BUTTON */}
 
-        <div className="flex flex-col gap-3">
+        <div
+          className="
+            flex
+            flex-col
+            gap-3
+          "
+        >
+
+          {/* INPUT */}
+
           <div className="relative">
             <input
               type="number"
+
               inputMode="numeric"
+
               value={val}
-              onChange={(e) => setVal(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleAction()}
+
+              onChange={(e) =>
+                setVal(e.target.value)
+              }
+
+              onKeyDown={(e) =>
+                e.key === "Enter" &&
+                handleAction()
+              }
+
               placeholder="Pontuação"
+
               className="
                 w-full
                 bg-black/40
                 border
                 border-white/10
                 rounded-2xl
-                p-4
+                p-3 
+                md:p-4
                 text-white
-                text-xl
+                text-lg
                 text-center
                 focus:ring-2
                 focus:ring-yellow-500/50
                 outline-none
                 transition-all
-                placeholder:text-gray-600                
+                placeholder:text-gray-600
               "
             />
+
           </div>
+
+          {/* BUTTON */}
 
           <button
             onClick={handleAction}
+
             disabled={!val}
+
             className="
               w-full
               bg-yellow-600
@@ -180,136 +283,170 @@ export default function TeamColumn({
               disabled:hover:bg-yellow-600
               text-black
               font-black
-              py-4
+              py-3
+              md:py-4
               rounded-2xl
               transition-all
               uppercase
-              text-xs
-              tracking-[0.2em]
-              shadow-[0_10px_20px_rgba(202,138,4,0.2)]
+              text-[11px]
+              tracking-[0.25em]
+              shadow-[0_10px_20px_rgba(202,138,4,0.15)]
               active:scale-[0.98]
             "
           >
             Confirmar Pontos
           </button>
+
         </div>
+
       </div>
 
-      {/* HISTÓRICO  */}
+      {/* HISTORY */}
 
       <div
         className="
-        mt-10
-        w-full
-        border-t
-        border-white/5
-        pt-6
-      "
+          mt-6
+          w-full
+          border-t
+          border-white/5
+          pt-5
+        "
       >
-        <div className="flex justify-between items-center mb-4">
+
+        {/* HEADER */}
+
+        <div
+          className="
+            flex
+            justify-between
+            items-center
+            mb-4
+          "
+        >
+
           <p
             className="
-            text-[10px]
-            font-black
-            text-gray-500
-            uppercase
-            tracking-[0.3em]
-          "
+              text-[10px]
+              font-black
+              text-gray-500
+              uppercase
+              tracking-[0.3em]
+            "
           >
             Número de Rodadas
           </p>
 
           <span
             className="
-            text-[10px]
-            text-white/20
-            px-2
-            py-0.5
-            border
-            border-white/5
-            rounded-md
-            uppercase
-            tracking-widest
-          "
+              text-[10px]
+              text-white/20
+              px-2
+              py-0.5
+              border
+              border-white/5
+              rounded-md
+              uppercase
+              tracking-widest
+            "
           >
-            {team.history.length} JOGADAS
+            {team.history.length}
+            {" "}
+            JOGADAS
           </span>
+
         </div>
+
+        {/* LIST */}
 
         <div
           className="
-          space-y-2
-          max-h-36
-          overflow-y-auto
-          pr-1
-          custom-scrollbar
-        "
+            space-y-2
+            max-h-24
+            md:max-h-32
+            overflow-y-auto
+            pr-1
+            custom-scrollbar
+          "
         >
+
           {team.history.length === 0 ? (
+
             <div
               className="
-              flex
-              flex-col
-              items-center
-              py-4
-              opacity-20
-            "
+                flex
+                flex-col
+                items-center
+                py-4
+                opacity-20
+              "
             >
+
               <div
                 className="
-                w-8
-                h-px
-                bg-white/50
-                mb-2
-              "
+                  w-8
+                  h-px
+                  bg-white/50
+                  mb-2
+                "
               />
 
               <p
                 className="
-                text-[10px]
-                uppercase
-                tracking-tighter
-              "
+                  text-[10px]
+                  uppercase
+                  tracking-tight
+                "
               >
                 Aguardando início
               </p>
             </div>
+
           ) : (
-            team.history.map((pts, index) => (
+
+            team.history.map((
+              pts,
+              index
+            ) => (
+
               <div
                 key={index}
+
                 className="
                   flex
                   justify-between
                   items-center
-
                   bg-white/2
-                  hover:bg-white/5
-                  p-3
+                  hover:bg-white/4
+                  px-3
+                  py-2.5
                   rounded-xl
                   border
                   border-white/5
                   transition-colors
-                  group
                 "
               >
+
                 <span
                   className="
-                  text-gray-600
-                  text-[10px]
-                  font-bold
-                "
+                    text-gray-600
+                    text-[10px]
+                    font-bold
+                  "
                 >
                   Rodada {index + 1}
                 </span>
 
                 <span
                   className={`
-                  font-black
-                  text-sm
+                    font-black
+                    text-sm
 
-                  ${pts >= 0 ? "text-green-500/80" : "text-red-500/80"}
-                `}
+                    ${
+                      pts >= 0
+                        ? "text-green-500/80"
+                        : "text-red-500/80"
+                    }
+                  `}
                 >
                   {pts}
                 </span>
