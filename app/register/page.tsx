@@ -1,17 +1,18 @@
 'use client';
 
 import { useState } from "react";
-import { registerUser }
-from "../actions/auth";
-
-import { useRouter }
-from "next/navigation";
+import { registerUser } from "../actions/auth";
+import { useRouter } from "next/navigation";
+import StateCitySelect from "@/components/StateCitySelect";
 
 export default function RegisterPage() {
 
   const router = useRouter();
 
   /* STATES */
+
+  const [state, setState] =
+    useState("");
 
   const [name, setName] =
     useState("");
@@ -22,14 +23,16 @@ export default function RegisterPage() {
   const [city, setCity] =
     useState("");
 
-  const [favoriteGame, setFavoriteGame] = 
-  useState < "CANASTRA" | "TRUCO" | "DOMINO"  > ("CANASTRA");
-
   const [email, setEmail] =
     useState("");
 
   const [password, setPassword] =
     useState("");
+
+  const [
+    confirmPassword,
+    setConfirmPassword
+  ] = useState("");
 
   const [message, setMessage] =
     useState("");
@@ -45,6 +48,29 @@ export default function RegisterPage() {
 
       setMessage("");
 
+      /* VALIDATION */
+
+      if (!state || !city) {
+
+        setMessage(
+          "Selecione estado e cidade"
+        );
+
+        return;
+      }
+
+      if (
+        password !==
+        confirmPassword
+      ) {
+
+        setMessage(
+          "As senhas não coincidem"
+        );
+
+        return;
+      }
+
       setLoading(true);
 
       const result =
@@ -53,7 +79,6 @@ export default function RegisterPage() {
           name,
           nickname,
           city,
-          favoriteGame,
           email,
           password,
         });
@@ -75,10 +100,11 @@ export default function RegisterPage() {
 
       setName("");
       setNickname("");
+      setState("");
       setCity("");
-      setFavoriteGame("CANASTRA");
       setEmail("");
       setPassword("");
+      setConfirmPassword("");
 
       /* REDIRECT */
 
@@ -103,15 +129,11 @@ export default function RegisterPage() {
     <div
       className="
         min-h-screen
-
         flex
         items-center
         justify-center
-
         bg-black
-
         text-white
-
         px-4
         py-10
       "
@@ -121,18 +143,13 @@ export default function RegisterPage() {
         className="
           w-full
           max-w-xl
-
           bg-white/5
-
           backdrop-blur-2xl
-
-          p-8
-
+          p-6
+          md:p-8
           rounded-[2rem]
-
           border
           border-white/10
-
           shadow-[0_0_60px_rgba(0,0,0,0.45)]
         "
       >
@@ -143,10 +160,9 @@ export default function RegisterPage() {
 
           <h1
             className="
-              text-4xl
-
+              text-3xl
+              md:text-4xl
               font-black
-
               mb-3
             "
           >
@@ -155,8 +171,9 @@ export default function RegisterPage() {
 
           <p
             className="
+              text-sm
+              md:text-base
               text-white/40
-
               leading-relaxed
             "
           >
@@ -200,20 +217,13 @@ export default function RegisterPage() {
 
             className="
               w-full
-
               p-4
-
               rounded-2xl
-
               bg-black/60
-
               border
               border-white/10
-
               outline-none
-
               focus:border-yellow-500/50
-
               transition-all
             "
           />
@@ -235,106 +245,29 @@ export default function RegisterPage() {
 
             className="
               w-full
-
               p-4
-
               rounded-2xl
-
               bg-black/60
-
               border
               border-white/10
-
               outline-none
-
               focus:border-yellow-500/50
-
               transition-all
             "
           />
 
-          {/* CITY */}
+          {/* STATE + CITY */}
 
-          <input
-            type="text"
+          <StateCitySelect
 
-            placeholder="Cidade"
+            selectedState={state}
 
-            value={city}
+            selectedCity={city}
 
-            onChange={(e) =>
-              setCity(e.target.value)
-            }
+            onStateChange={setState}
 
-            disabled={loading}
-
-            className="
-              w-full
-
-              p-4
-
-              rounded-2xl
-
-              bg-black/60
-
-              border
-              border-white/10
-
-              outline-none
-
-              focus:border-yellow-500/50
-
-              transition-all
-            "
+            onCityChange={setCity}
           />
-
-          {/* FAVORITE GAME */}
-
-          <select
-
-            value={favoriteGame}
-
-            onChange={(e) =>
-              setFavoriteGame(
-                e.target.value as "CANASTRA" | "TRUCO" | "DOMINO"
-              )
-            }
-
-            disabled={loading}
-
-            className="
-              w-full
-
-              p-4
-
-              rounded-2xl
-
-              bg-black/60
-
-              border
-              border-white/10
-
-              outline-none
-
-              focus:border-yellow-500/50
-
-              transition-all
-            "
-          >
-
-            <option value="CANASTRA">
-              Canastra
-            </option>
-
-            <option value="TRUCO">
-              Truco
-            </option>
-
-            <option value="DOMINO">
-              Dominó
-            </option>
-
-          </select>
 
           {/* EMAIL */}
 
@@ -353,20 +286,13 @@ export default function RegisterPage() {
 
             className="
               w-full
-
               p-4
-
               rounded-2xl
-
               bg-black/60
-
               border
               border-white/10
-
               outline-none
-
               focus:border-yellow-500/50
-
               transition-all
             "
           />
@@ -388,20 +314,43 @@ export default function RegisterPage() {
 
             className="
               w-full
-
               p-4
-
               rounded-2xl
-
               bg-black/60
-
               border
               border-white/10
-
               outline-none
-
               focus:border-yellow-500/50
+              transition-all
+            "
+          />
 
+          {/* CONFIRM PASSWORD */}
+
+          <input
+            type="password"
+
+            placeholder="Confirmar senha"
+
+            value={confirmPassword}
+
+            onChange={(e) =>
+              setConfirmPassword(
+                e.target.value
+              )
+            }
+
+            disabled={loading}
+
+            className="
+              w-full
+              p-4
+              rounded-2xl
+              bg-black/60
+              border
+              border-white/10
+              outline-none
+              focus:border-yellow-500/50
               transition-all
             "
           />
@@ -409,32 +358,22 @@ export default function RegisterPage() {
           {/* BUTTON */}
 
           <button
-
             type="submit"
 
             disabled={loading}
 
             className="
               w-full
-
               p-4
-
               mt-2
-
               bg-yellow-500
               hover:bg-yellow-400
-
               disabled:opacity-50
               disabled:cursor-not-allowed
-
               text-black
-
               rounded-2xl
-
               font-black
-
               transition-all
-
               shadow-[0_0_25px_rgba(234,179,8,0.25)]
             "
           >
@@ -452,11 +391,8 @@ export default function RegisterPage() {
             <div
               className="
                 p-4
-
                 rounded-2xl
-
                 bg-red-500/10
-
                 border
                 border-red-500/20
               "
@@ -465,25 +401,18 @@ export default function RegisterPage() {
               <p
                 className="
                   text-sm
-
                   text-center
-
                   text-red-300
                 "
               >
                 {message}
               </p>
-
             </div>
           )}
 
         </form>
-
       </div>
-
     </div>
   );
 }
-
-
 

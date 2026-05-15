@@ -5,14 +5,16 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 
+
 export async function registerUser(data: {
   name: string;
   nickname: string;
   city: string;
-  favoriteGame: "CANASTRA" | "TRUCO" | "DOMINO";
   email: string;
   password: string;
-}) {
+})
+
+ {
   try {
     /* NORMALIZAÇÃO */
 
@@ -106,7 +108,7 @@ export async function registerUser(data: {
         name: normalizedName,
         nickname: normalizedNickname,
         city: normalizedCity,
-        favoriteGame: data.favoriteGame,
+        
         email: normalizedEmail,
         password: hashedPassword,
         approvalToken,
