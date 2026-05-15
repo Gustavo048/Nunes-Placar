@@ -55,23 +55,18 @@ export default function TeamColumn({
   ];
 
   return (
-
     <div
       className="
         bg-black/30
         backdrop-blur-xl
         border
         border-white/10
-        
         rounded-[1.4rem]
         md:rounded-[1.7rem]
-
-        p-3
-        xl:p-5
-        md:p-4
+        p-4
+        md:p-5
         flex
         flex-col
-        items-center
         shadow-2xl
         transition-all
         hover:border-white/20
@@ -101,12 +96,9 @@ export default function TeamColumn({
 
           className="
             bg-transparent
-            
             text-xl
             md:text-2xl
             xl:text-3xl
-
-
             font-black
             text-center
             text-white
@@ -114,10 +106,10 @@ export default function TeamColumn({
             border-transparent
             focus:border-yellow-500
             outline-none
-            mb-5
+            mb-4
             w-full
             uppercase
-            tracking-[0.2em]
+            tracking-[0.18em]
             transition-all
             placeholder:text-white/20
           "
@@ -130,7 +122,7 @@ export default function TeamColumn({
         <div
           className="
             absolute
-            bottom-5
+            bottom-4
             left-0
             w-full
             h-px
@@ -138,28 +130,37 @@ export default function TeamColumn({
             group-focus-within:hidden
           "
         />
-
       </div>
 
-      {/* MAIN SCORE */}
+      {/* SCORE */}
 
-      <div className="relative">
+      <div
+        className="
+          flex
+          flex-col
+          items-center
+          py-8
+          md:py-10
+        "
+      >
 
-        <div
-          className="            
-           
-            text-[56px]
-            md:text-[68px]
-            xl:text-[82px]
-            leading-none
-            font-black
-            text-white
-            drop-shadow-[0_0_25px_rgba(255,255,255,0.18)]
-            my-2
-            tabular-nums
-          "
-        >
-          {team.score}
+        <div className="relative">
+
+          <div
+            className="
+              text-[58px]
+              md:text-[72px]
+              xl:text-[82px]
+              leading-none
+              font-black
+              text-white
+              drop-shadow-[0_0_25px_rgba(255,255,255,0.18)]
+              tabular-nums
+            "
+          >
+            {team.score}
+          </div>
+
         </div>
 
       </div>
@@ -169,11 +170,10 @@ export default function TeamColumn({
       <div
         className="
           w-full
-          mt-5
         "
       >
 
-        {/* TRUCO SHORTCUTS */}
+        {/* TRUCO */}
 
         {gameMode === "TRUCO" && (
 
@@ -229,6 +229,7 @@ export default function TeamColumn({
           {/* INPUT */}
 
           <div className="relative">
+
             <input
               type="number"
 
@@ -246,17 +247,18 @@ export default function TeamColumn({
               }
 
               placeholder="Pontuação"
-
               className="
                 w-full
                 bg-black/40
                 border
                 border-white/10
                 rounded-2xl
-                p-3 
-                md:p-4
+                py-3
+                md:py-4
+                px-4
                 text-white
-                text-lg
+                text-base
+                md:text-lg
                 text-center
                 focus:ring-2
                 focus:ring-yellow-500/50
@@ -288,28 +290,28 @@ export default function TeamColumn({
               rounded-2xl
               transition-all
               uppercase
-              text-[11px]
-              tracking-[0.25em]
+              text-[10px]
+              md:text-[11px]
+              tracking-[0.22em]
               shadow-[0_10px_20px_rgba(202,138,4,0.15)]
               active:scale-[0.98]
             "
           >
             Confirmar Pontos
           </button>
-
         </div>
-
       </div>
 
       {/* HISTORY */}
 
       <div
         className="
-          mt-6
+          mt-5
+          md:mt-6
           w-full
           border-t
           border-white/5
-          pt-5
+          pt-4
         "
       >
 
@@ -320,25 +322,26 @@ export default function TeamColumn({
             flex
             justify-between
             items-center
-            mb-4
+            mb-3
           "
         >
 
           <p
             className="
-              text-[10px]
+              text-[9px]
+              md:text-[10px]
               font-black
               text-gray-500
               uppercase
-              tracking-[0.3em]
-            "
+              tracking-[0.28em]            
+              "
           >
             Número de Rodadas
           </p>
 
           <span
             className="
-              text-[10px]
+              text-[9px]
               text-white/20
               px-2
               py-0.5
@@ -353,7 +356,6 @@ export default function TeamColumn({
             {" "}
             JOGADAS
           </span>
-
         </div>
 
         {/* LIST */}
@@ -365,8 +367,7 @@ export default function TeamColumn({
             md:max-h-32
             overflow-y-auto
             pr-1
-            custom-scrollbar
-          "
+            custom-scrollbar          "
         >
 
           {team.history.length === 0 ? (
@@ -399,6 +400,7 @@ export default function TeamColumn({
               >
                 Aguardando início
               </p>
+
             </div>
 
           ) : (
@@ -418,7 +420,7 @@ export default function TeamColumn({
                   bg-white/2
                   hover:bg-white/4
                   px-3
-                  py-2.5
+                  py-2
                   rounded-xl
                   border
                   border-white/5
