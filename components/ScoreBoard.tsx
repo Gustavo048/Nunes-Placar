@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 import TeamColumn from './TeamColumn';
 import { recordVictory } from '@/app/actions/ranking';
 import { incrementGuestUsage, getGuestUsage } from "@/app/actions/guest";
@@ -15,7 +16,8 @@ const GAME_MODES = {
   DOMINO: { label: 'Dominó' }
 } as const;
 
-type GameMode = keyof typeof GAME_MODES;
+type GameMode =
+  keyof typeof GAME_MODES;
 
 type Team = {
   id: string;
@@ -24,47 +26,31 @@ type Team = {
   history: number[];
 };
 
-interface ScoreBoardProps {
-  onModeChange?: (mode: GameMode) => void;
-}
+interface ScoreBoardProps { onModeChange?: ( mode: GameMode ) => void; }
 
-export default function ScoreBoard({
-  onModeChange
-}: ScoreBoardProps) {
+export default function ScoreBoard({ onModeChange }: ScoreBoardProps) {
 
   /* SESSION */
 
-  const {
-    data: session
-  } = useSession();
+  const { data: session } = useSession();
 
   /* STATES */
 
-  const [
-    guestBlocked,
-    setGuestBlocked
-  ] = useState(false);
+  const [ guestBlocked, setGuestBlocked ] = useState(false);
 
-  const [
-    guestGamesPlayed,
-    setGuestGamesPlayed
-  ] = useState(0);
+  const [ guestGamesPlayed, setGuestGamesPlayed ] = useState(0);
 
-const remainingGames =
-  Math.max(
-    0,
-    3 - guestGamesPlayed
-  );
+  const [ loadingSave, setLoadingSave ] = useState(false);
 
-  const [
-    gameMode,
-    setGameMode
-  ] = useState<GameMode>('CANASTRA');
+  const [ showSaveModal, setShowSaveModal ] = useState(false);
 
-  const [
-    teams,
-    setTeams
-  ] = useState<Team[]>([
+  const [ showResetModal, setShowResetModal ] = useState(false);
+
+  const remainingGames = Math.max( 0, 3 - guestGamesPlayed);
+
+  const [ gameMode, setGameMode ] = useState<GameMode>('CANASTRA');
+
+  const [ teams, setTeams ] = useState<Team[]>([
     {
       id: 'A',
       name: 'Equipe A',
@@ -99,15 +85,15 @@ const remainingGames =
         return;
       }
 
-      const guestId =
-        getGuestId();
+      const guestId = getGuestId();
 
       if (!guestId) {
         return;
       }
 
-      const usage =
-        await getGuestUsage(guestId);
+      const usage = await getGuestUsage(
+          guestId
+        );
 
       if (usage.success) {
 
@@ -140,6 +126,7 @@ const remainingGames =
         team.id === teamId
           ? {
               ...team,
+
               score:
                 team.score + points,
 
@@ -153,7 +140,7 @@ const remainingGames =
     );
   };
 
-  /* UPDATE NAME */
+  /* UPDATE TEAM NAME */
 
   const updateTeamName = (
     teamId: string,
@@ -176,16 +163,17 @@ const remainingGames =
 
   const getWinner = () => {
 
-    return teams.reduce((prev, curr) =>
-      curr.score > prev.score
-        ? curr
-        : prev
+    return teams.reduce(
+      (prev, curr) =>
+        curr.score > prev.score
+          ? curr
+          : prev
     );
   };
 
-  /* FINISH GAME */
+  /* SAVE GAME */
 
-  const handleFinishGame =
+  const handleSaveGame =
     async () => {
 
     const [
@@ -194,12 +182,15 @@ const remainingGames =
     ] = teams;
 
     if (
-      teamA.score === teamB.score
+      teamA.score ===
+      teamB.score
     ) {
 
-      return alert(
+      toast.error(
         "O jogo está empatado!"
       );
+
+      return;
     }
 
     if (
@@ -207,50 +198,55 @@ const remainingGames =
       teamB.score === 0
     ) {
 
-      return alert(
+      toast.error(
         "Inicie uma partida primeiro!"
       );
+
+      return;
     }
 
-    const winner =
-      getWinner();
+    setShowSaveModal(true);
+  };
 
-    const confirm =
-      window.confirm(
-        `Finalizar partida de ${gameMode}? Vitória de ${winner.name}!`
-      );
+  /* CONFIRM SAVE GAME */
 
-    if (!confirm) return;
+  const confirmSaveGame =
+    async () => {
 
-    /* GUEST CONTROL */
-
-    if (!session?.user) {
-
-      const guestId =
-        getGuestId();
-
-      if (guestId) {
-
-        const usage =
-          await incrementGuestUsage(
-            guestId
-          );
-
-        if (
-          usage.success &&
-          usage.gamesPlayed >= 3
-        ) {
-
-          setGuestBlocked(true);
-        }
-
-        setGuestGamesPlayed(
-          usage.gamesPlayed
-        );
-      }
-    }
+    setLoadingSave(true);
 
     try {
+
+      const winner =
+        getWinner();
+
+      /* GUEST CONTROL */
+
+      if (!session?.user) {
+
+        const guestId =
+          getGuestId();
+
+        if (guestId) {
+
+          const usage =
+            await incrementGuestUsage(
+              guestId
+            );
+
+          if (
+            usage.success &&
+            usage.gamesPlayed >= 3
+          ) {
+
+            setGuestBlocked(true);
+          }
+
+          setGuestGamesPlayed(
+            usage.gamesPlayed
+          );
+        }
+      }
 
       const result =
         await recordVictory(
@@ -259,217 +255,229 @@ const remainingGames =
           gameMode
         );
 
-      /* RESET MATCH */
-
-      setTeams(prev =>
-        prev.map(team => ({
-          ...team,
-          score: 0,
-          history: [],
-        }))
-      );
-
-      /* FEEDBACK */
-
       if (result.success) {
 
-        alert(
-          "Partida registrada no Ranking!"
+        toast.success(
+          "Partida registrada no ranking!"
         );
 
       } else {
 
-        alert(result.message);
+        toast.error(
+          result.message
+        );
       }
+
+      setShowSaveModal(false);
 
     } catch (error) {
 
       console.error(
-        "Falha ao salvar no ranking:",
+        "Falha ao salvar ranking:",
         error
       );
 
-      /* RESET */
-
-      setTeams(prev =>
-        prev.map(team => ({
-          ...team,
-          score: 0,
-          history: [],
-        }))
+      toast.error(
+        "Erro ao salvar ranking."
       );
 
-      alert(
-        "Partida finalizada, mas ocorreu erro ao salvar ranking."
-      );
+      setShowSaveModal(false);
+
+    } finally {
+
+      setLoadingSave(false);
     }
+  };
+
+  /* NEW GAME */
+
+  const startNewGame = () => {
+
+    setTeams(prev =>
+      prev.map(team => ({
+        ...team,
+        score: 0,
+        history: [],
+      }))
+    );
+
+    toast.success(
+      "Nova partida iniciada!"
+    );
   };
 
   /* RESET GAME */
 
   const resetGame = () => {
-    if (
-      window.confirm(
-        "Deseja realmente zerar o placar da partida atual?"
-      )
-    ) {
 
-      setTeams(prev =>
-        prev.map(team => ({
-          ...team,
-          score: 0,
-          history: [],
-        }))
-      );
-    }
+    setTeams(prev =>
+      prev.map(team => ({
+        ...team,
+        score: 0,
+        history: [],
+      }))
+    );
+
+    setShowResetModal(false);
+
+    toast.success(
+      "Placar resetado!"
+    );
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
-
-{/* GUEST BAR */}
-
-{!session?.user && !guestBlocked && (
-
-  <div
-    className="
-      mb-4
-      mx-1
-      flex
-      items-center
-      justify-between
-      gap-4
-      px-3
-      md:px-5
-      py-3
-      rounded-[1.4rem]
-      border
-      backdrop-blur-xl
-      transition-all
-    "
-
-    style={{
-      borderColor:
-        remainingGames === 1
-          ? 'rgba(234,179,8,0.18)'
-          : 'rgba(255,255,255,0.06)',
-
-      background:
-        remainingGames === 1
-          ? 'rgba(234,179,8,0.05)'
-          : 'rgba(255,255,255,0.025)'
-    }}
-  >
-
-    {/* LEFT */}
 
     <div
       className="
-        flex
-        items-center
-        gap-3
-        min-w-0
+        w-full
+        max-w-5xl
+        mx-auto
       "
     >
-      <div
-        className={`
-          w-2
-          h-2
-          rounded-full
-          shrink-0
 
-          ${
-            remainingGames === 1
-              ? 'bg-yellow-400'
-              : 'bg-white/40'
-          }
-        `}
-      />
-      <div className="leading-tight">
-        <p
+      {/* GUEST BAR */}
+
+      {!session?.user &&
+        !guestBlocked && (
+
+        <div
           className="
-            text-[10px]
-            uppercase
-            tracking-[0.2em] md:tracking-[0.35em]
-            text-white/35
-            font-black
+            mb-4
+            mx-1
+            flex
+            items-center
+            justify-between
+            gap-4
+            px-3
+            md:px-5
+            py-3
+            rounded-[1.4rem]
+            border
+            backdrop-blur-xl
+            transition-all
           "
-        >
-          Modo visitante
-        </p>
 
-        <p
-          className={`
-            text-xs
-            md:text-sm
-            mt-1
-            font-medium
-
-            ${
+          style={{
+            borderColor:
               remainingGames === 1
-                ? 'text-yellow-300'
-                : 'text-white/65'
-            }
-          `}
+                ? 'rgba(234,179,8,0.18)'
+                : 'rgba(255,255,255,0.06)',
+
+            background:
+              remainingGames === 1
+                ? 'rgba(234,179,8,0.05)'
+                : 'rgba(255,255,255,0.025)'
+          }}
         >
 
-          {remainingGames > 1
-            ? `${remainingGames} partidas gratuitas restantes`
-            : 'Última partida gratuita disponível'}
-        </p>
-      </div>
-    </div>
+          <div
+            className="
+              flex
+              items-center
+              gap-3
+              min-w-0
+            "
+          >
 
-    {/* CTA */}
+            <div
+              className={`
+                w-2
+                h-2
+                rounded-full
+                shrink-0
 
-    <Link
-      href="/register"
+                ${
+                  remainingGames === 1
+                    ? 'bg-yellow-400'
+                    : 'bg-white/40'
+                }
+              `}
+            />
 
-      className="
-        shrink-0
-        px-4
-        md:px-5
-        py-2.5
-        rounded-xl
-        bg-yellow-500
-        hover:bg-yellow-400
-        text-black
-        text-[10px]
-        uppercase
-        tracking-[0.18em]
-        font-black
-        transition-all
-        shadow-[0_0_20px_rgba(234,179,8,0.18)]
-      "
-    >
-      Criar Conta
-    </Link>
+            <div className="leading-tight">
 
-  </div>
-)}
+              <p
+                className="
+                  text-[10px]
+                  uppercase
+                  tracking-[0.2em]
+                  md:tracking-[0.35em]
+                  text-white/35
+                  font-black
+                "
+              >
+                Modo visitante
+              </p>
+
+              <p
+                className={`
+                  text-xs
+                  md:text-sm
+                  mt-1
+                  font-medium
+
+                  ${
+                    remainingGames === 1
+                      ? 'text-yellow-300'
+                      : 'text-white/65'
+                  }
+                `}
+              >
+
+                {remainingGames > 1
+                  ? `${remainingGames} partidas gratuitas restantes`
+                  : 'Última partida gratuita disponível'}
+
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href="/register"
+
+            className="
+              shrink-0
+              px-4
+              md:px-5
+              py-2.5
+              rounded-xl
+              bg-yellow-500
+              hover:bg-yellow-400
+              text-black
+              text-[10px]
+              uppercase
+              tracking-[0.18em]
+              font-black
+              transition-all
+              shadow-[0_0_20px_rgba(234,179,8,0.18)]
+            "
+          >
+            Criar Conta
+          </Link>
+
+        </div>
+      )}
 
       {/* TOOLBAR */}
-      
-<div
-  className="
-    flex
-    flex-wrap
-   
-    justify-center 
-    md:justify-between
 
-    items-center
-    gap-4
-    mb-5
-    bg-black/30
-    px-4
-    py-3
-    rounded-[1.7rem]
-    border
-    border-white/5
-    backdrop-blur-md
-  "
->
+      <div
+        className="
+          flex
+          flex-wrap
+          justify-center
+          md:justify-between
+          items-center
+          gap-4
+          mb-5
+          bg-black/30
+          px-4
+          py-3
+          rounded-[1.7rem]
+          border
+          border-white/5
+          backdrop-blur-md
+        "
+      >
 
         {/* GAME MODES */}
 
@@ -550,76 +558,106 @@ const remainingGames =
               >
                 {mode.label}
               </span>
-
             </button>
           ))}
         </div>
 
-        {/* ACTIONS */}
+{/* ACTIONS */}
 
-        <div
-          className="
-            flex
-            gap-3
-          "
-        >
+<div
+  className="
+    flex
+    flex-wrap
+    justify-center
+    gap-3
+  "
+>
 
-          <button
-            onClick={resetGame}
-            className="
-              bg-zinc-800
-              hover:bg-red-900/40
-              text-red-500
-              px-4
-              py-2
-              rounded-xl
-              transition-all
-              text-[10px]
-              font-black
-              uppercase
-              tracking-widest
-              border
-              border-red-900/20
-              active:scale-95
-            "
-          >
-            Reset
-          </button>
+  {/* NEW GAME */}
 
-          <button
+  <button
+    onClick={startNewGame}
 
-            onClick={() => {
+    className="
+      bg-green-600
+      hover:bg-green-500
+      text-white
+      px-6
+      py-2
+      rounded-xl
+      transition-all
+      text-[10px]
+      font-black
+      uppercase
+      tracking-widest
+      shadow-lg
+      shadow-green-900/20
+      active:scale-95
+    "
+  >
+    Nova Partida
+  </button>
 
-              if (guestBlocked) {
-                return;
-              }
+  {/* SAVE */}
 
-              handleFinishGame();
-            }}
+  <button
+    onClick={() => {
 
-            className="
-              bg-green-600
-              hover:bg-green-500
-              text-white
-              px-6
-              py-2
-              rounded-xl
-              transition-all
-              text-[10px]
-              font-black
-              uppercase
-              tracking-widest
-              shadow-lg
-              shadow-green-900/20
-              active:scale-95
-            "
-          >
-            Nova Partida
-          </button>
+      if (guestBlocked) {
+        return;
+      }
 
-        </div>
+      handleSaveGame();
+    }}
 
-      </div>
+    className="
+      bg-yellow-500
+      hover:bg-yellow-400
+      text-black
+      px-6
+      py-2
+      rounded-xl
+      transition-all
+      text-[10px]
+      font-black
+      uppercase
+      tracking-widest
+      shadow-lg
+      shadow-yellow-900/20
+      active:scale-95
+    "
+  >
+    Salvar
+  </button>
+
+  {/* RESET */}
+
+  <button
+    onClick={() =>
+      setShowResetModal(true)
+    }
+
+    className="
+      bg-zinc-800
+      hover:bg-red-900/40
+      text-red-500
+      px-4
+      py-2
+      rounded-xl
+      transition-all
+      text-[10px]
+      font-black
+      uppercase
+      tracking-widest
+      border
+      border-red-900/20
+      active:scale-95
+    "
+  >
+    Reset
+  </button>
+</div>
+</div>
 
       {/* SCOREBOARD */}
 
@@ -656,7 +694,6 @@ const remainingGames =
             grid
             grid-cols-1
             md:grid-cols-2
-
             gap-4
             md:gap-6
           "
@@ -691,142 +728,292 @@ const remainingGames =
 
       </AnimatePresence>
 
-      {/* GUEST BLOCK MODAL */}
+      {/* SAVE MODAL */}
 
-      {guestBlocked &&
-        !session?.user && (
+      <AnimatePresence>
+        {showSaveModal && (
 
-        <div
-          className="
-            fixed
-            inset-0
-            z-50
-            flex
-            items-center
-            justify-center
-            bg-black/80
-            backdrop-blur-md
-          "
-        >
+          <motion.div
+            initial={{
+              opacity: 0
+            }}
 
-          <div
+            animate={{
+              opacity: 1
+            }}
+
+            exit={{
+              opacity: 0
+            }}
+
             className="
-              w-full
-              max-w-md
-              mx-4
-              p-8
-              rounded-[2rem]
-              bg-zinc-950
-              border
-              border-white/10
-              shadow-[0_0_80px_rgba(0,0,0,0.6)]
+              fixed
+              inset-0
+              z-50
+              flex
+              items-center
+              justify-center
+              bg-black/70
+              backdrop-blur-md
             "
           >
 
-            <div className="space-y-6">
+            <motion.div
+              initial={{
+                scale: 0.92,
+                opacity: 0
+              }}
 
-              <div>
+              animate={{
+                scale: 1,
+                opacity: 1
+              }}
 
-                <h2
+              exit={{
+                scale: 0.92,
+                opacity: 0
+              }}
+
+              transition={{
+                duration: 0.2
+              }}
+
+              className="
+                w-full
+                max-w-md
+                mx-4
+                p-7
+                rounded-[2rem]
+                border
+                border-white/10
+                bg-zinc-950
+                shadow-[0_0_80px_rgba(0,0,0,0.5)]
+              "
+            >
+
+              <div className="space-y-6">
+                <div>
+                  <h2
+                    className="
+                      text-2xl
+                      font-black
+                      text-white
+                      mb-3
+                    "
+                  >
+                    Salvar partida?
+                  </h2>
+
+                  <p
+                    className="
+                      text-white/50
+                      leading-relaxed
+                    "
+                  >
+                    A vitória será registrada
+                    no ranking oficial.
+                  </p>
+                </div>
+
+                <div
                   className="
-                    text-3xl
-                    font-black
-                    text-white
-                    mb-3
+                    flex
+                    gap-3
                   "
                 >
-                  Continue no Ranking
-                </h2>
 
-                <p
-                  className="
-                    text-white/50
-                    leading-relaxed
-                  "
-                >
-                  Crie sua conta gratuita
-                  para continuar registrando
-                  partidas, salvar estatísticas
-                  e participar do ranking oficial.
-                </p>
+                  <button
+                    onClick={() =>
+                      setShowSaveModal(false)
+                    }
 
+                    className="
+                      flex-1
+                      py-4
+                      rounded-2xl
+                      bg-white/5
+                      hover:bg-white/10
+                      border
+                      border-white/10
+                      text-white
+                      font-bold
+                      transition-all
+                    "
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    onClick={ confirmSaveGame }
+
+                    disabled={ loadingSave }
+
+                    className="
+                      flex-1
+                      py-4
+                      rounded-2xl
+                      bg-yellow-500
+                      hover:bg-yellow-400
+                      disabled:opacity-50
+                      text-black
+                      font-black
+                      transition-all
+                    "
+                  >
+
+                    {loadingSave
+                      ? "Salvando..."
+                      : "Salvar"}
+
+                  </button>
+                </div>
               </div>
 
-              <div
-                className="
-                  space-y-3
-                  text-sm
-                  text-white/70
-                "
-              >
+            </motion.div>
 
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* RESET MODAL */}
+
+      <AnimatePresence>
+
+        {showResetModal && (
+
+          <motion.div
+            initial={{
+              opacity: 0
+            }}
+
+            animate={{
+              opacity: 1
+            }}
+
+            exit={{
+              opacity: 0
+            }}
+
+            className="
+              fixed
+              inset-0
+              z-50
+              flex
+              items-center
+              justify-center
+              bg-black/70
+              backdrop-blur-md
+            "
+          >
+
+            <motion.div
+              initial={{
+                scale: 0.92,
+                opacity: 0
+              }}
+
+              animate={{
+                scale: 1,
+                opacity: 1
+              }}
+
+              exit={{
+                scale: 0.92,
+                opacity: 0
+              }}
+
+              transition={{
+                duration: 0.2
+              }}
+
+              className="
+                w-full
+                max-w-md
+                mx-4
+                p-7
+                rounded-[2rem]
+                border
+                border-white/10
+                bg-zinc-950
+                shadow-[0_0_80px_rgba(0,0,0,0.5)]
+              "
+            >
+
+              <div className="space-y-6">
                 <div>
-                  • Histórico de partidas
+                  <h2
+                    className="
+                      text-2xl
+                      font-black
+                      text-white
+                      mb-3
+                    "
+                  >
+                    Resetar placar?
+                  </h2>
+
+                  <p
+                    className="
+                      text-white/50
+                      leading-relaxed
+                    "
+                  >
+                    Todas as pontuações
+                    da partida atual
+                    serão removidas.
+                  </p>
                 </div>
 
-                <div>
-                  • Ranking oficial
-                </div>
-
-                <div>
-                  • Estatísticas em tempo real
-                </div>
-
-                <div>
-                  • Perfil competitivo
-                </div>
-
-              </div>
-
-              <div
-                className="
-                  flex
-                  gap-3
-                "
-              >
-
-                <Link
-                  href="/login"
-
+                <div
                   className="
-                    flex-1
-                    py-4
-                    rounded-2xl
-                    text-center
-                    bg-white/5
-                    hover:bg-white/10
-                    border
-                    border-white/10
-                    text-white
-                    font-bold
-                    transition-all
+                    flex
+                    gap-3
                   "
                 >
-                  Login
-                </Link>
 
-                <Link
-                  href="/register"
-                  className="
-                    flex-1
-                    py-4
-                    rounded-2xl
-                    text-center
-                    bg-yellow-500
-                    hover:bg-yellow-400
-                    text-black
-                    font-black
-                    transition-all
-                  "
-                >
-                  Criar Conta
-                </Link>
+                  <button
+                    onClick={() =>
+                      setShowResetModal(false)
+                    }
 
+                    className="
+                      flex-1
+                      py-4
+                      rounded-2xl
+                      bg-white/5
+                      hover:bg-white/10
+                      border
+                      border-white/10
+                      text-white
+                      font-bold
+                      transition-all
+                    "
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    onClick={resetGame}
+
+                    className="
+                      flex-1
+                      py-4
+                      rounded-2xl
+                      bg-red-600
+                      hover:bg-red-500
+                      text-white
+                      font-black
+                      transition-all
+                    "
+                  >
+                    Resetar
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -12,7 +12,7 @@ export default function Header() {
 
   return (
     <header
-      className="      
+      className="
         w-full
         h-21
         md:h-23
@@ -30,13 +30,12 @@ export default function Header() {
     >
       <div
         className="
-          max-w-6xl 
+          max-w-5xl
           h-full
           mx-auto
           flex
           items-center
           justify-between
-          
           gap-4
         "
       >
@@ -77,7 +76,7 @@ export default function Header() {
               "
             />
           </Link>
-        </div>
+        </div>        
 
         {/* RIGHT */}
 

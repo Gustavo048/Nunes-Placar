@@ -1,13 +1,12 @@
-'use server';
+"use server";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/app/auth";
+import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 
 // LISTAR PENDENTES
 
 export async function getPendingUsers() {
-
   const session = await auth();
 
   if (!session?.user) {
@@ -31,7 +30,6 @@ export async function getPendingUsers() {
 // APROVAR USUÁRIO
 
 export async function approveUser(userId: string) {
-
   const session = await auth();
 
   if (!session?.user) {
@@ -43,7 +41,6 @@ export async function approveUser(userId: string) {
   }
 
   await prisma.user.update({
-
     where: {
       id: userId,
     },
@@ -53,17 +50,16 @@ export async function approveUser(userId: string) {
     },
   });
 
- revalidatePath("/admin");
+  revalidatePath("/admin");
 
-return {
-  success: true,
-};
+  return {
+    success: true,
+  };
 }
 
 // REJEITAR USUÁRIO
 
 export async function rejectUser(userId: string) {
-
   const session = await auth();
 
   if (!session?.user) {
@@ -75,7 +71,6 @@ export async function rejectUser(userId: string) {
   }
 
   await prisma.user.update({
-
     where: {
       id: userId,
     },
@@ -87,7 +82,7 @@ export async function rejectUser(userId: string) {
 
   revalidatePath("/admin");
 
-return {
-  success: true,
-};
+  return {
+    success: true,
+  };
 }

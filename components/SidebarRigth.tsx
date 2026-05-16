@@ -1,52 +1,31 @@
-'use client';
+"use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-
-import RankingPanel, {
-  RankingItem
-} from "./RankingPanel";
-
-import {
-  getRanking
-} from "@/app/actions/ranking";
+import RankingPanel, { RankingItem } from "./RankingPanel";
+import { getRanking } from "@/app/actions/ranking";
 
 interface Props {
-  gameMode:
-    "CANASTRA" |
-    "TRUCO" |
-    "DOMINO";
+  gameMode: "CANASTRA" | "TRUCO" | "DOMINO";
 }
 
-export default function SidebarRight({
-  gameMode
-}: Props) {
-
+export default function SidebarRight({ gameMode }: Props) {
   /* RANKING */
 
-  const [
-    rankingData,
-    setRankingData
-  ] = useState<RankingItem[]>([]);
+  const [rankingData, setRankingData] = useState<RankingItem[]>([]);
 
   /* FETCH RANKING */
 
   useEffect(() => {
-
     async function fetchRanking() {
-
-      const data =
-        await getRanking(gameMode);
+      const data = await getRanking(gameMode);
 
       setRankingData(data);
     }
 
     fetchRanking();
-
   }, [gameMode]);
 
   return (
-
     <aside
       className="
         w-full
@@ -55,13 +34,12 @@ export default function SidebarRight({
         gap-3
       "
     >
-
       {/* RANKING */}
 
       <div
         className="        
-            rounded-[1.4rem]
-            md:rounded-[1.7rem]
+          rounded-[1.4rem]
+          md:rounded-[1.7rem]
           border
           border-white/10
           bg-white/3
@@ -69,18 +47,13 @@ export default function SidebarRight({
           overflow-hidden
         "
       >
-
-        <RankingPanel
-          data={rankingData}
-          activeMode={gameMode}
-        />
-
+        <RankingPanel data={rankingData} activeMode={gameMode} />
       </div>
 
       {/* SPONSOR */}
 
-<div
-  className="
+      <div
+        className="
     rounded-[1.4rem]
     md:rounded-[1.7rem]
     border
@@ -89,17 +62,16 @@ export default function SidebarRight({
     from-yellow-500/10
     via-yellow-500/3
     to-transparent
-    p-4
+    p-2.5
     backdrop-blur-2xl
     overflow-hidden
     relative
   "
->
+      >
+        {/* GLOW */}
 
-  {/* GLOW */}
-
-  <div
-    className="
+        <div
+          className="
       absolute
       top-0
       right-0
@@ -109,130 +81,97 @@ export default function SidebarRight({
       blur-3xl
       rounded-full
     "
-  />
+        />
 
-  <div className="relative z-10">
+        <div className="relative z-10">
+          {/* HEADER */}
 
-    {/* HEADER */}
-
-    <div
-      className="
+          <div
+            className="
         flex
         items-center
         gap-2
         mb-3
       "
-    >
-
-      <div
-        className="
+          >
+            <div
+              className="
           w-1.5
           h-1.5
           rounded-full
-          bg-yellow-400
+          bg-yellow-400       
         "
-      />
+            />
 
-      <span
-        className="
-          text-[9px]
-
+            <span
+              className="
+          text-[10px]
           uppercase
-
           tracking-[0.3em]
-
           text-yellow-300/70
-
-          font-black
+          font-black          
         "
-      >
-        Patrocinador
-      </span>
+            >
+              Patrocinador
+            </span>
+          </div>
 
-    </div>
+          {/* CONTENT */}
 
-    {/* CONTENT */}
-
-    <div
-      className="
+          <div
+            className="
         rounded-2xl
-
         border
         border-white/10
-
         bg-black/20
-
         p-4
       "
-    >
-
-      <div
-        className="
+          >
+            <div
+              className="
           text-base
-
           font-black
-
           text-white
-
           mb-2
         "
-      >
-        Sua marca aqui
-      </div>
-
-      <p
-        className="
-          text-xs
-
+            >
+              Sua marca aqui
+            </div>
+            <p
+              className="
+          text-xs 
           text-white/50
-
           leading-relaxed
-
           mb-4
         "
-      >
-        Alcance jogadores, campeonatos
-        e eventos competitivos.
-      </p>
+            >
+              Alcance jogadores, campeonatos e eventos competitivos.
+            </p>
 
-      <button
-        className="
+            <button
+              className="
           w-full
-
           py-3
-
           rounded-xl
-
           bg-yellow-500
           hover:bg-yellow-400
-
           text-black
-
           text-[11px]
-
           uppercase
-
           tracking-[0.2em]
-
           font-black
-
           transition-all
         "
-      >
-        Anunciar
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
+            >
+              Anunciar
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* PREMIUM CTA */}
 
-      <div
+      {/* <div
         className="
           rounded-[1.7rem]
           border
@@ -315,8 +254,7 @@ export default function SidebarRight({
           </Link>
 
         </div>
-      </div>
+      </div> */}
     </aside>
   );
 }
-

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { forgotPassword } from "@/app/actions/forgot-password";
+import { toast } from "sonner"
 
 
 export default function ForgotPasswordPage() {
@@ -27,7 +28,7 @@ export default function ForgotPasswordPage() {
 
       /* SEGURANÇA - NÃO revela existência da conta */
 
-      alert(
+      toast(
         "Se existir uma conta vinculada a este email, enviaremos instruções para redefinição de senha."      );
 
       router.push("/login");

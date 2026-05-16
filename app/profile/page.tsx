@@ -1,71 +1,51 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/app/auth";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 export default async function ProfilePage() {
-
   /* SESSION */
 
-  const session =
-    await auth();
+  const session = await auth();
 
   if (!session?.user?.email) {
-
     redirect("/login");
   }
 
   /* USER */
 
-  const user =
-    await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user.email,
+    },
 
-      where: {
-        email: session.user.email,
-      },
-
-      include: {
-        rankings: true,
-      },
-    });
+    include: {
+      rankings: true,
+    },
+  });
 
   if (!user) {
-
     redirect("/");
   }
 
   /* STATS */
 
-  const totalVictories =
-    user.rankings.reduce(
+  const totalVictories = user.rankings.reduce(
+    (acc, ranking) => acc + ranking.victories,
 
-      (acc, ranking) =>
-        acc + ranking.victories,
+    0,
+  );
 
-      0
-    );
+  const totalPoints = user.rankings.reduce(
+    (acc, ranking) => acc + ranking.totalPoints,
 
-  const totalPoints =
-    user.rankings.reduce(
+    0,
+  );
 
-      (acc, ranking) =>
-        acc + ranking.totalPoints,
+  const totalTeams = user.rankings.length;
 
-      0
-    );
-
-  const totalTeams =
-    user.rankings.length;
-
-  const bestTeam =
-    user.rankings.sort(
-
-      (a, b) =>
-        b.victories - a.victories
-
-    )[0];
+  const bestTeam = user.rankings.sort((a, b) => b.victories - a.victories)[0];
 
   return (
-
     <main
       className="
         min-h-screen
@@ -82,7 +62,6 @@ export default async function ProfilePage() {
           space-y-8
         "
       >
-
         {/* HERO */}
 
         <section
@@ -96,7 +75,6 @@ export default async function ProfilePage() {
             shadow-[0_0_80px_rgba(0,0,0,0.45)]
           "
         >
-
           <div
             className="
               flex
@@ -107,7 +85,6 @@ export default async function ProfilePage() {
               gap-8
             "
           >
-
             {/* USER INFO */}
 
             <div
@@ -117,7 +94,6 @@ export default async function ProfilePage() {
                 gap-6
               "
             >
-
               {/* AVATAR */}
 
               <div
@@ -135,10 +111,7 @@ export default async function ProfilePage() {
                   shadow-[0_0_30px_rgba(234,179,8,0.3)]
                 "
               >
-
-                {user.nickname?.charAt(0) ||
-                  user.name.charAt(0)}
-
+                {user.nickname?.charAt(0) || user.name.charAt(0)}
               </div>
 
               {/* DETAILS */}
@@ -151,10 +124,7 @@ export default async function ProfilePage() {
                     leading-none
                   "
                 >
-
-                  {user.nickname ||
-                    user.name}
-
+                  {user.nickname || user.name}
                 </h1>
                 <p
                   className="
@@ -163,7 +133,6 @@ export default async function ProfilePage() {
                   "
                 >
                   {user.name}
-
                 </p>
                 <div
                   className="
@@ -174,9 +143,7 @@ export default async function ProfilePage() {
                     mt-4
                   "
                 >
-
                   {user.city && (
-
                     <div
                       className="
                         px-4
@@ -192,12 +159,10 @@ export default async function ProfilePage() {
                       "
                     >
                       {user.city}
-
                     </div>
                   )}
 
                   {user.favoriteGame && (
-
                     <div
                       className="
                         px-4
@@ -299,7 +264,6 @@ export default async function ProfilePage() {
               "
             >
               {totalVictories}
-
             </h2>
           </div>
 
@@ -333,7 +297,6 @@ export default async function ProfilePage() {
               "
             >
               {totalPoints}
-
             </h2>
           </div>
 
@@ -368,7 +331,6 @@ export default async function ProfilePage() {
               "
             >
               {totalTeams}
-
             </h2>
           </div>
 
@@ -403,7 +365,6 @@ export default async function ProfilePage() {
               "
             >
               {bestTeam?.teamName || "--"}
-
             </h2>
           </div>
         </section>
