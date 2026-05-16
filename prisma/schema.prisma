@@ -16,44 +16,76 @@ model User {
   password    String
   role        UserRole     @default(USER)
   status      UserStatus   @default(PENDING)
-
-  /* PERFIL */
-  nickname    String?
-  city        String?
+  nickname     String?
+  city         String?
+  state        String?
+  country      String?     @default("Brasil")
   favoriteGame GameMode?
-  avatarUrl   String?
-  bio         String?
+  avatarUrl    String?
+  bio          String?
+
+  /* ADMIN CONTROL */
+
+  blocked      Boolean      @default(false)
+  blockedAt    DateTime?
+  blockedBy    String?
+  approvedAt   DateTime?
+  approvedBy   String?
+
+  /* ACTIVITY */
+  isOnline     Boolean      @default(false)
+  lastLoginAt  DateTime?
+  lastSeenAt   DateTime?
 
   /* TOKENS */
-  approvalToken String?      @unique
-  resetPasswordToken String? @unique
-  resetPasswordExpiresAt DateTime?
+  approvalToken            String?   @unique
+  resetPasswordToken       String?   @unique
+  resetPasswordExpiresAt   DateTime?
 
-  /* RELAÇÕES */
-  rankings    Ranking[]
+  /* RELATIONS */
+  rankings     Ranking[]
 
   /* TIMESTAMPS */
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model AdminLog {
+
+  id          String    @id @default(cuid())
+  adminId     String
+  action      String
+  description String?
+  targetId    String?
+  ipAddress   String?
+  createdAt   DateTime  @default(now())
 }
 
 model Ranking {
-
   id           String       @id @default(cuid())
   teamName     String
   userId       String
   user         User         @relation(fields: [userId], references: [id])
   gameMode     GameMode
   victories    Int          @default(0)
-  totalPoints  Int          @default(0)  
+  totalPoints  Int          @default(0)
+  matchCount   Int          @default(0)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
-  
+
   @@unique([teamName, gameMode])
   @@index([gameMode])
   @@index([teamName])
   @@index([victories])
   @@index([totalPoints])
+}
+
+model GuestUsage {
+  id           String     @id @default(cuid())
+  guestId      String     @unique
+  gamesPlayed  Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 enum GameMode {
@@ -73,10 +105,4 @@ enum UserStatus {
   REJECTED
 }
 
-model GuestUsage {
-  id          String   @id @default(cuid())
-  guestId     String   @unique
-  gamesPlayed Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
+

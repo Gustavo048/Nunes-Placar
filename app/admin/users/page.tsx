@@ -1,31 +1,16 @@
-import AdminStats from "@/components/admin/AdminStats";
-import RecentActivity from "@/components/admin/RecentActivity";
-import SystemInsights from "@/components/admin/SystemInsights";
+import UserManagementTable
+from "@/components/admin/UserManagementTable";
+
 import {
-  getAdminMetrics,
-  getRecentAdminLogs,
-  getSystemInsights
-} from "../actions/admin-metrics";
+  getAllUsers
+} from "@/app/actions/admin";
 
-export default async function AdminPage() {
+export default async function AdminUsersPage() {
 
-  // FETCH METRICS
+  // FETCH USERS
 
-  const metricsResult =
-    await getAdminMetrics();
-
-  const metrics =
-    metricsResult.metrics;
-
-  // FETCH LOGS
-
-  const logs =
-    await getRecentAdminLogs();
-
-  // FETCH INSIGHTS
-
-  const insights =
-    await getSystemInsights();
+  const users =
+    await getAllUsers();
 
   return (
 
@@ -84,7 +69,7 @@ export default async function AdminPage() {
               font-black
             "
           >
-            ADMIN PANEL
+            USER CONTROL
           </span>
 
         </div>
@@ -103,7 +88,7 @@ export default async function AdminPage() {
             mb-4
           "
         >
-          Painel Administrativo
+          Gestão de Usuários
         </h1>
 
         <p
@@ -118,53 +103,24 @@ export default async function AdminPage() {
             leading-relaxed
           "
         >
-          Gerencie solicitações de acesso,
-          aprove usuários do ranking e
-          acompanhe toda operação do sistema.
+          Gerencie usuários, permissões,
+          aprovações, bloqueios e
+          monitore atividade em tempo real.
         </p>
 
       </section>
 
-      {/* METRICS */}
-
-      {metrics && (
-
-        <section>
-
-          <AdminStats
-            metrics={metrics}
-          />
-
-        </section>
-      )}
-
-      {/* SYSTEM INSIGHTS */}
+      {/* USERS TABLE */}
 
       <section>
 
-        <SystemInsights
-          insights={insights}
+        <UserManagementTable
+          users={users}
         />
 
       </section>
 
-      {/* RECENT ACTIVITY */}
-
-      <section>
-
-        <RecentActivity
-          logs={logs}
-        />
-
-      </section>
     </div>
   );
 }
-
-
-
-
-
-
-
 

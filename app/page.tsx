@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -98,52 +99,53 @@ export default function Home() {
 
           {/* LEFT CONTENT */}
 
-        <section
-          className="
-            min-w-0
-            relative
-          "
-        >
+          <section
+            className="
+              min-w-0
+              relative
+            "
+          >
 
-  {/* AMBIENT GLOW */}
+            {/* AMBIENT GLOW */}
 
-        <div
-          className="
-            absolute
-            top-1/2
-            left-1/2
-            -translate-x-1/2
-            -translate-y-1/2
-            w-[65%]
-            h-[65%]
-            rounded-full
-            bg-yellow-500/10
-            blur-[120px]
-            pointer-events-none
+            <div
+              className="
+                absolute
+                top-1/2
+                left-1/2
+                -translate-x-1/2
+                -translate-y-1/2
+                w-[65%]
+                h-[65%]
+                rounded-full
+                bg-yellow-500/10
+                blur-[120px]
+                pointer-events-none
+                -z-10
+              "
+            />
 
-            -z-10
-          "
-        />
+            <div
+              className="
+                bg-white/3
+                border
+                border-white/10
+                rounded-[2.5rem]
+                p-1.5
+                backdrop-blur-2xl
+                shadow-[0_0_60px_rgba(0,0,0,0.45)]
+              "
+            >
 
-        <div
-          className="
-            bg-white/3
-            border
-            border-white/10
-            rounded-[2.5rem]
-            p-1.5
-            backdrop-blur-2xl
-            shadow-[0_0_60px_rgba(0,0,0,0.45)]
-          "
-        >
+              <ScoreBoard
+                onModeChange={(mode) =>
+                  setActiveGameMode(mode)
+                }
+              />
 
-          <ScoreBoard
-            onModeChange={(mode) =>
-              setActiveGameMode(mode)
-            }
-          />
-        </div>
-      </section>
+            </div>
+
+          </section>
 
           {/* RIGHT SIDEBAR */}
 
@@ -160,6 +162,7 @@ export default function Home() {
             />
 
           </aside>
+
         </div>
 
         {/* FOOTER */}
@@ -216,16 +219,23 @@ export default function Home() {
                   w-1.5
                   h-1.5
                   rounded-full
+                  bg-green-400
                 "
               />
 
               Santa Catarina • Brasil
 
             </div>
+
           </div>
+
         </footer>
+
       </div>
+
     </main>
   );
 }
+
+
 
