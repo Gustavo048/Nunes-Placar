@@ -98,31 +98,52 @@ export default function Home() {
 
           {/* LEFT CONTENT */}
 
-          <section
-            className="
-              min-w-0
-            "
-          >
+        <section
+          className="
+            min-w-0
+            relative
+          "
+        >
 
-            <div
-              className="
-                bg-white/3
-                border
-                border-white/10
-                rounded-[2.5rem]
-                p-1.5
-                backdrop-blur-2xl
-                shadow-[0_0_60px_rgba(0,0,0,0.45)]
-              "
-            >
+  {/* AMBIENT GLOW */}
 
-              <ScoreBoard
-                onModeChange={(mode) =>
-                  setActiveGameMode(mode)
-                }
-              />
-            </div>
-          </section>
+        <div
+          className="
+            absolute
+            top-1/2
+            left-1/2
+            -translate-x-1/2
+            -translate-y-1/2
+            w-[65%]
+            h-[65%]
+            rounded-full
+            bg-yellow-500/10
+            blur-[120px]
+            pointer-events-none
+
+            -z-10
+          "
+        />
+
+        <div
+          className="
+            bg-white/3
+            border
+            border-white/10
+            rounded-[2.5rem]
+            p-1.5
+            backdrop-blur-2xl
+            shadow-[0_0_60px_rgba(0,0,0,0.45)]
+          "
+        >
+
+          <ScoreBoard
+            onModeChange={(mode) =>
+              setActiveGameMode(mode)
+            }
+          />
+        </div>
+      </section>
 
           {/* RIGHT SIDEBAR */}
 

@@ -3,14 +3,24 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+
 import UserInfo from "@/components/UserInfo";
 
 export default function Header() {
+
   /* SESSION */
 
-  const { data: session } = useSession();
+  const {
+    data: session
+  } = useSession();
+
+  /* ADMIN */
+
+  const isAdmin =
+    session?.user?.role === "ADMIN";
 
   return (
+
     <header
       className="
         w-full
@@ -28,6 +38,7 @@ export default function Header() {
         shadow-[0_0_60px_rgba(0,0,0,0.45)]
       "
     >
+
       <div
         className="
           max-w-5xl
@@ -39,6 +50,7 @@ export default function Header() {
           gap-4
         "
       >
+
         {/* LEFT */}
 
         <div
@@ -50,10 +62,12 @@ export default function Header() {
             min-w-0
           "
         >
+
           {/* LOGO */}
 
           <Link
             href="/"
+
             className="
               relative
               shrink-0
@@ -63,20 +77,26 @@ export default function Header() {
               hover:opacity-90
             "
           >
+
             <Image
               src="/logo-v3.png"
               alt="Nunes Placar"
+
               width={260}
               height={70}
+
               priority
+
               className="
                 w-full
                 h-auto
                 object-contain
               "
             />
+
           </Link>
-        </div>        
+
+        </div>
 
         {/* RIGHT */}
 
@@ -89,14 +109,60 @@ export default function Header() {
             shrink-0
           "
         >
-          {session?.user ? (
-            <UserInfo />
-          ) : (
+        
+{session?.user ? (
+
+  <div
+    className="
+      flex
+      items-center
+      gap-2
+      md:gap-3
+    "
+  >
+
+    <UserInfo />
+
+    {/* ADMIN BUTTON */}
+
+    {isAdmin && (
+
+      <Link
+        href="/admin"
+
+        className="
+          px-3
+          md:px-3.5
+          py-2
+          rounded-lg
+          bg-white/5
+          hover:bg-yellow-500/15
+          border
+          border-yellow-500/10
+          text-yellow-300/80
+          hover:text-yellow-200
+          text-[10px]
+          font-black
+          uppercase
+          tracking-[0.18em]
+          transition-all
+          backdrop-blur-md
+        "
+            >
+              Admin
+            </Link>
+          )}
+
+        </div>
+
+      ) : (
             <>
+
               {/* LOGIN */}
 
               <Link
                 href="/login"
+
                 className="
                   px-4
                   md:px-5
@@ -109,7 +175,7 @@ export default function Header() {
                   text-white
                   text-xs
                   md:text-sm
-                  font-semibold
+                  font-bold
                   transition-all
                 "
               >
@@ -120,6 +186,7 @@ export default function Header() {
 
               <Link
                 href="/register"
+
                 className="
                   px-4
                   md:px-5
@@ -138,9 +205,14 @@ export default function Header() {
                 Registrar
               </Link>
             </>
+
           )}
         </div>
       </div>
     </header>
   );
 }
+
+
+
+

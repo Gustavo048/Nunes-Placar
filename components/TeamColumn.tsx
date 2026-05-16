@@ -1,5 +1,6 @@
-'use client';
+"use client";
 
+import { motion } from "framer-motion";
 import { useState } from "react";
 
 interface TeamProps {
@@ -9,10 +10,7 @@ interface TeamProps {
     history: number[];
   };
 
-  gameMode:
-    "TRUCO" |
-    "CANASTRA" |
-    "DOMINO";
+  gameMode: "TRUCO" | "CANASTRA" | "DOMINO";
 
   onAddPoints: (pts: number) => void;
 
@@ -25,19 +23,14 @@ export default function TeamColumn({
   onAddPoints,
   onNameChange,
 }: TeamProps) {
-
-  const [val, setVal] =
-    useState("");
+  const [val, setVal] = useState("");
 
   /* ACTION */
 
   const handleAction = () => {
-
-    const points =
-      parseInt(val);
+    const points = parseInt(val);
 
     if (!isNaN(points)) {
-
       onAddPoints(points);
 
       setVal("");
@@ -46,21 +39,15 @@ export default function TeamColumn({
 
   /* TRUCO SHORTCUTS */
 
-  const trucoShortcuts = [
-    1,
-    3,
-    6,
-    9,
-    12
-  ];
+  const trucoShortcuts = [1, 3, 6, 9, 12];
 
   return (
     <div
       className="
-        bg-black/30
+        bg-black/45
         backdrop-blur-xl
         border
-        border-white/10
+        border-white/8
         rounded-[1.4rem]
         md:rounded-[1.7rem]
         p-4
@@ -72,7 +59,6 @@ export default function TeamColumn({
         hover:border-white/20
       "
     >
-
       {/* TEAM NAME */}
 
       <div
@@ -82,18 +68,10 @@ export default function TeamColumn({
           group
         "
       >
-
         <input
           type="text"
-
           value={team.name}
-
-          onChange={(e) =>
-            onNameChange(
-              e.target.value
-            )
-          }
-
+          onChange={(e) => onNameChange(e.target.value)}
           className="
             bg-transparent
             text-xl
@@ -113,7 +91,6 @@ export default function TeamColumn({
             transition-all
             placeholder:text-white/20
           "
-
           placeholder="
             NOME DA EQUIPE
           "
@@ -143,26 +120,37 @@ export default function TeamColumn({
           md:py-10
         "
       >
-
-        <div className="relative">
-
+        <motion.div
+          key={team.score}
+          initial={{
+            scale: 1.12,
+            opacity: 0.7,
+          }}
+          animate={{
+            scale: 1,
+            opacity: 1,
+          }}
+          transition={{
+            duration: 0.22,
+          }}
+          className="relative"
+        >
           <div
             className="
-              text-[58px]
-              md:text-[72px]
-              xl:text-[82px]
-              leading-none
-              font-black
-              text-white
-              drop-shadow-[0_0_25px_rgba(255,255,255,0.18)]
-              tabular-nums
-            "
+            text-[58px]
+            md:text-[72px]
+            xl:text-[82px]
+            leading-none
+            font-black
+            text-white
+            drop-shadow-[0_0_25px_rgba(255,255,255,0.18)]
+            tabular-nums
+            transition-all
+          "
           >
             {team.score}
           </div>
-
-        </div>
-
+        </motion.div>
       </div>
 
       {/* ACTIONS */}
@@ -172,11 +160,9 @@ export default function TeamColumn({
           w-full
         "
       >
-
         {/* TRUCO */}
 
         {gameMode === "TRUCO" && (
-
           <div
             className="
               grid
@@ -185,16 +171,10 @@ export default function TeamColumn({
               mb-4
             "
           >
-
             {trucoShortcuts.map((pts) => (
-
               <button
                 key={pts}
-
-                onClick={() =>
-                  onAddPoints(pts)
-                }
-
+                onClick={() => onAddPoints(pts)}
                 className="
                   bg-white/5
                   hover:bg-yellow-600
@@ -225,27 +205,38 @@ export default function TeamColumn({
             gap-3
           "
         >
-
           {/* INPUT */}
 
           <div className="relative">
-
             <input
-              type="number"
-
+              type="text"
               inputMode="numeric"
-
+              maxLength={5}
               value={val}
+              onChange={(e) => {
+                let value = e.target.value;
 
-              onChange={(e) =>
-                setVal(e.target.value)
-              }
+                /* REMOVE CARACTERES INVÁLIDOS */
 
-              onKeyDown={(e) =>
-                e.key === "Enter" &&
-                handleAction()
-              }
+                value = value.replace(/[^0-9-]/g, "");
 
+                /* PERMITE SOMENTE 1 "-" */
+
+                const minusCount = (value.match(/-/g) || []).length;
+
+                if (minusCount > 1) {
+                  return;
+                }
+
+                /* "-" SOMENTE NO INÍCIO */
+
+                if (value.includes("-") && value.indexOf("-") !== 0) {
+                  return;
+                }
+
+                setVal(value);
+              }}
+              onKeyDown={(e) => e.key === "Enter" && handleAction()}
               placeholder="Pontuação"
               className="
                 w-full
@@ -267,16 +258,13 @@ export default function TeamColumn({
                 placeholder:text-gray-600
               "
             />
-
           </div>
 
           {/* BUTTON */}
 
           <button
             onClick={handleAction}
-
             disabled={!val}
-
             className="
               w-full
               bg-yellow-600
@@ -314,7 +302,6 @@ export default function TeamColumn({
           pt-4
         "
       >
-
         {/* HEADER */}
 
         <div
@@ -325,7 +312,6 @@ export default function TeamColumn({
             mb-3
           "
         >
-
           <p
             className="
               text-[9px]
@@ -352,9 +338,7 @@ export default function TeamColumn({
               tracking-widest
             "
           >
-            {team.history.length}
-            {" "}
-            JOGADAS
+            {team.history.length} JOGADAS
           </span>
         </div>
 
@@ -369,9 +353,7 @@ export default function TeamColumn({
             pr-1
             custom-scrollbar          "
         >
-
           {team.history.length === 0 ? (
-
             <div
               className="
                 flex
@@ -381,7 +363,6 @@ export default function TeamColumn({
                 opacity-20
               "
             >
-
               <div
                 className="
                   w-8
@@ -400,19 +381,11 @@ export default function TeamColumn({
               >
                 Aguardando início
               </p>
-
             </div>
-
           ) : (
-
-            team.history.map((
-              pts,
-              index
-            ) => (
-
+            team.history.map((pts, index) => (
               <div
                 key={index}
-
                 className="
                   flex
                   justify-between
@@ -427,7 +400,6 @@ export default function TeamColumn({
                   transition-colors
                 "
               >
-
                 <span
                   className="
                     text-gray-600
@@ -443,11 +415,7 @@ export default function TeamColumn({
                     font-black
                     text-sm
 
-                    ${
-                      pts >= 0
-                        ? "text-green-500/80"
-                        : "text-red-500/80"
-                    }
+                    ${pts >= 0 ? "text-green-500/80" : "text-red-500/80"}
                   `}
                 >
                   {pts}
