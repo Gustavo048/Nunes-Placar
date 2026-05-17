@@ -1,16 +1,15 @@
 interface Log {
 
   id: string;
-
   action: string;
-
   targetId: string | null;
-
   createdAt: string | Date;
 }
 
 interface RecentActivityProps {
-  logs: ReadonlyArray<Log>;
+
+  logs:
+    ReadonlyArray<Log>;
 }
 
 function getActionLabel(
@@ -33,6 +32,12 @@ function getActionLabel(
 
     case "PROMOTE_ADMIN":
       return "Usuário promovido para ADMIN";
+
+    case "DELETE_RANKING_TEAM":
+      return "Equipe removida";
+
+    case "RESET_RANKING_TEAM":
+      return "Ranking resetado";
 
     default:
       return action;
@@ -60,6 +65,12 @@ function getActionColor(
     case "PROMOTE_ADMIN":
       return "bg-blue-400";
 
+    case "DELETE_RANKING_TEAM":
+      return "bg-red-400";
+
+    case "RESET_RANKING_TEAM":
+      return "bg-yellow-400";
+
     default:
       return "bg-yellow-400";
   }
@@ -80,7 +91,6 @@ export default function RecentActivity({
         backdrop-blur-2xl
         p-5
         md:p-6
-        shadow-[0_0_60px_rgba(0,0,0,0.45)]
       "
     >
 
@@ -88,7 +98,7 @@ export default function RecentActivity({
 
       <div
         className="
-          mb-6
+          mb-5
         "
       >
 
@@ -107,7 +117,7 @@ export default function RecentActivity({
 
         <h2
           className="
-            text-2xl
+            text-xl
             font-black
             text-white
           "
@@ -122,23 +132,23 @@ export default function RecentActivity({
 
         <div
           className="
-            rounded-2xl
+            rounded-xl
             border
             border-white/5
             bg-black/20
-            p-10
+            p-8
             text-center
           "
         >
 
           <p
             className="
+              text-sm
               text-white/35
             "
           >
             Nenhuma atividade recente.
           </p>
-
         </div>
       )}
 
@@ -146,7 +156,10 @@ export default function RecentActivity({
 
       <div
         className="
-          space-y-3
+          space-y-2
+          border-l
+          border-white/5
+          pl-4
         "
       >
 
@@ -159,21 +172,14 @@ export default function RecentActivity({
               flex
               items-center
               justify-between
-
               gap-4
-
-              rounded-2xl
-
+              rounded-xl
               border
               border-white/5
-
               bg-black/20
-
               px-4
-              py-4
-
+              py-3
               transition-all
-
               hover:border-yellow-500/10
             "
           >
@@ -184,9 +190,7 @@ export default function RecentActivity({
               className="
                 flex
                 items-center
-
                 gap-3
-
                 min-w-0
               "
             >
@@ -195,8 +199,8 @@ export default function RecentActivity({
                 className={`
                   w-2.5
                   h-2.5
-
                   rounded-full
+                  shrink-0
 
                   ${getActionColor(
                     log.action
@@ -213,10 +217,7 @@ export default function RecentActivity({
                 <p
                   className="
                     text-sm
-                    md:text-base
-
                     text-white
-
                     font-bold
                   "
                 >
@@ -228,17 +229,15 @@ export default function RecentActivity({
                 <p
                   className="
                     text-xs
-
                     text-white/35
+                    truncate
                   "
                 >
                   Target:
                   {" "}
                   {log.targetId || "--"}
                 </p>
-
               </div>
-
             </div>
 
             {/* DATE */}
@@ -246,16 +245,14 @@ export default function RecentActivity({
             <div
               className="
                 shrink-0
-
                 text-right
               "
             >
 
               <p
                 className="
-                  text-xs
-
-                  text-white/35
+                  text-[11px]
+                  text-white/30
                 "
               >
                 {new Date(
@@ -264,14 +261,10 @@ export default function RecentActivity({
                   "pt-BR"
                 )}
               </p>
-
             </div>
-
           </div>
         ))}
-
       </div>
-
     </section>
   );
 }

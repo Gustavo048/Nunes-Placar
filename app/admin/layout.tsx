@@ -1,10 +1,13 @@
-import type { ReactNode } from 'react';
-import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
-import AdminSidebar from '@/components/admin/AdminSidebar';
+import type { ReactNode } from "react";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminAutoRefresh from "@/components/admin/AdminAutoRefresh";
 
 interface AdminLayoutProps {
-  children: ReactNode;
+
+  children:
+    ReactNode;
 }
 
 export default async function AdminLayout({
@@ -17,32 +20,33 @@ export default async function AdminLayout({
     await auth();
 
   if (!session?.user) {
-    redirect('/');
+
+    redirect("/");
   }
 
   /* ADMIN VALIDATION */
 
   if (
     session.user.role !==
-    'ADMIN'
+    "ADMIN"
   ) {
 
-    redirect('/');
+    redirect("/");
   }
 
   return (
-
     <main
       className="
         min-h-screen
-
         relative
-
         overflow-hidden
-
         bg-black
       "
     >
+
+      {/* AUTO REFRESH */}
+
+      <AdminAutoRefresh />
 
       {/* BACKGROUND */}
 
@@ -50,7 +54,6 @@ export default async function AdminLayout({
         className="
           absolute
           inset-0
-
           -z-20
         "
 
@@ -59,13 +62,13 @@ export default async function AdminLayout({
             "url('/imagem-v1.jpg')",
 
           backgroundSize:
-            'cover',
+            "cover",
 
           backgroundPosition:
-            'center',
+            "center",
 
           backgroundAttachment:
-            'fixed',
+            "fixed",
         }}
       />
 
@@ -75,63 +78,42 @@ export default async function AdminLayout({
         className="
           absolute
           inset-0
-
           bg-black/85
-
           backdrop-blur-[3px]
-
           -z-10
         "
       />
 
-      {/* CONTENT */}
+      {/* SHELL */}
 
       <div
         className="
-          max-w-425
-
-          mx-auto
-
-          px-4
-          md:px-6
-
-          py-6
+          flex
+          min-h-screen
         "
       >
 
-        {/* GRID */}
+        {/* SIDEBAR */}
+
+        <AdminSidebar />
+
+        {/* CONTENT */}
 
         <div
           className="
-            grid
-
-            grid-cols-1
-            xl:grid-cols-[260px_minmax(0,1fr)]
-
-            gap-6
-
-            items-start
+            flex-1
+            max-w-425
+            w-full
+            px-6
+            md:px-10
+            py-8
           "
         >
 
-          {/* SIDEBAR */}
-
-          <AdminSidebar />
-
-          {/* PAGE */}
-
-          <section
-            className="
-              min-w-0
-            "
-          >
-            {children}
-          </section>
+          {children}
 
         </div>
-
       </div>
-
     </main>
   );
 }

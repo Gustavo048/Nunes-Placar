@@ -1,274 +1,219 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const items = [
-
+const links = [
   {
-    label: 'Overview',
-    href: '/admin',
+    href: "/admin",
+    label: "Dashboard",
   },
 
   {
-    label: 'Usuários',
-    href: '/admin/users',
+    href: "/admin/ranking",
+    label: "Ranking",
   },
 
   {
-    label: 'Ranking',
-    href: '/admin/ranking',
-  },
-
-  {
-    label: 'Logs',
-    href: '/admin/logs',
-  },
-
-  {
-    label: 'Segurança',
-    href: '/admin/security',
+    href: "/admin/logs",
+    label: "Logs",
   },
 ];
 
 export default function AdminSidebar() {
-
-  const pathname =
-    usePathname();
+  const pathname = usePathname();
 
   return (
-
     <aside
       className="
-        w-full
-        xl:w-65
-
+        flex
+        flex-col
+        w-70
+        sticky
+        top-0
+        h-screen
         shrink-0
+        border-r
+        border-white/10
+        bg-black/40
+        backdrop-blur-2xl
+        p-6
       "
     >
+      {/* BRAND */}
 
       <div
         className="
-          sticky
-          top-6
-
-          rounded-[2rem]
-
-          border
-          border-white/10
-
-          bg-white/3
-
-          backdrop-blur-2xl
-
-          p-4
-
-          shadow-[0_0_60px_rgba(0,0,0,0.45)]
+          mb-10
         "
       >
+        <div
+          className="
+            inline-flex
+            items-center
+            gap-2
+            mb-4
+            px-3
+            py-1.5
+            rounded-full
+            border
+            border-yellow-500/10
+            bg-yellow-500/5
+          "
+        >
+          <div
+            className="
+              w-2
+              h-2
+              rounded-full
+              bg-yellow-400
+            "
+          />
 
-        {/* HEADER */}
+          <span
+            className="
+              text-[10px]
+              uppercase
+              tracking-[0.3em]
+              text-yellow-200/80
+              font-black
+            "
+          >
+            ADMIN SYSTEM
+          </span>
+        </div>
+
+        <h1
+          className="
+            text-3xl
+            font-black
+            text-white
+            mb-8
+          "
+        >
+          Backoffice
+        </h1>
+
+        {/* SECTION */}
 
         <div
           className="
-            mb-6
+            mb-4
           "
         >
-
           <p
             className="
               text-[10px]
-
               uppercase
-
               tracking-[0.35em]
-
-              text-yellow-300/70
-
+              text-white/25
               font-black
-
-              mb-3
             "
           >
-            ADMIN CORE
+            OPERATIONS
           </p>
-
-          <h2
-            className="
-              text-2xl
-
-              font-black
-
-              text-white
-            "
-          >
-            Controle
-          </h2>
-
         </div>
-
-        {/* NAV */}
-
-        <nav
-          className="
-            flex
-            flex-col
-
-            gap-2
-          "
-        >
-
-          {items.map((item) => {
-
-            const active =
-              pathname === item.href;
-
-            return (
-
-              <Link
-                key={item.href}
-
-                href={item.href}
-
-                className={`
-                  group
-
-                  relative
-
-                  flex
-                  items-center
-
-                  px-4
-                  py-3
-
-                  rounded-2xl
-
-                  border
-
-                  transition-all
-
-                  overflow-hidden
-
-                  ${
-                    active
-                      ? `
-                        bg-yellow-500
-                        text-black
-                        border-yellow-400
-                      `
-                      : `
-                        bg-white/2
-                        text-white/55
-                        border-white/5
-
-                        hover:border-yellow-500/20
-                        hover:text-white
-                      `
-                  }
-                `}
-              >
-
-                {/* GLOW */}
-
-                {!active && (
-
-                  <div
-                    className="
-                      absolute
-                      inset-0
-
-                      opacity-0
-
-                      group-hover:opacity-100
-
-                      transition-all
-
-                      bg-linear-to-r
-                      from-yellow-500/5
-                      to-transparent
-                    "
-                  />
-                )}
-
-                <span
-                  className="
-                    relative
-
-                    text-[11px]
-
-                    uppercase
-
-                    tracking-[0.22em]
-
-                    font-black
-                  "
-                >
-                  {item.label}
-                </span>
-
-              </Link>
-            );
-          })}
-
-        </nav>
-
-        {/* FOOTER */}
-
-        <div
-          className="
-            mt-8
-            pt-6
-
-            border-t
-            border-white/5
-          "
-        >
-
-          <div
-            className="
-              flex
-              items-center
-
-              gap-3
-            "
-          >
-
-            <div
-              className="
-                w-2.5
-                h-2.5
-
-                rounded-full
-
-                bg-green-400
-
-                shadow-[0_0_12px_rgba(34,197,94,0.8)]
-              "
-            />
-
-            <span
-              className="
-                text-[10px]
-
-                uppercase
-
-                tracking-[0.25em]
-
-                text-white/40
-
-                font-black
-              "
-            >
-              Sistema Operacional
-            </span>
-
-          </div>
-
-        </div>
-
       </div>
 
+      {/* NAVIGATION */}
+
+      <nav
+        className="
+          space-y-3
+        "
+      >
+        {links.map((link) => {
+          const active = pathname === link.href;
+
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`
+                flex
+                items-center
+                h-13
+                px-4
+                rounded-2xl
+                border
+                transition-all
+
+                ${
+                  active
+                    ? `
+                      border-cyan-500/20
+                      bg-cyan-500/10
+                      text-cyan-300
+                    `
+                    : `
+                      border-white/5
+                      bg-white/2
+                      text-white/55
+                      hover:bg-white/4
+                      hover:text-white
+                      hover:border-white/10
+                    `
+                }
+              `}
+            >
+              <span
+                className="
+                  text-sm
+                  font-bold
+                "
+              >
+                {link.label}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* FOOTER */}
+
+      <div
+        className="
+          mt-auto
+          pt-6
+        "
+      >
+        <Link
+          href="/"
+          className="
+            flex
+            items-center
+            gap-2
+            h-13
+            px-4
+            rounded-2xl
+            border
+            border-white/5
+            bg-white/2.5
+            text-white/35
+            transition-all
+            hover:bg-white/3
+            hover:text-white
+            hover:border-white/10
+          "
+        >
+          <span
+            className="
+              text-sm
+            "
+          >
+            ←
+          </span>
+
+          <span
+            className="
+              text-sm
+              font-bold
+            "
+          >
+            Voltar ao Sistema
+          </span>
+        </Link>
+      </div>
     </aside>
   );
 }
-

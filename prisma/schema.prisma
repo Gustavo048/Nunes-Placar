@@ -44,6 +44,7 @@ model User {
 
   /* RELATIONS */
   rankings     Ranking[]
+  match        Match[]
 
   /* TIMESTAMPS */
   createdAt    DateTime     @default(now())
@@ -78,6 +79,20 @@ model Ranking {
   @@index([teamName])
   @@index([victories])
   @@index([totalPoints])
+}
+
+model Match {
+
+  id          String   @id @default(cuid())
+  gameMode    GameMode
+  teamA       String
+  teamB       String
+  scoreA      Int
+  scoreB      Int
+  winner      String
+  playedById  String
+  playedBy    User @relation(fields: [playedById], references: [id])
+  createdAt   DateTime @default(now())
 }
 
 model GuestUsage {

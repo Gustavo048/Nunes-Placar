@@ -21,12 +21,18 @@ export interface Insight {
 export interface AdminLogItem {
 
   id: string;
-
   action: string;
-
   targetId: string | null;
-
   createdAt: Date;
+}
+
+export interface LiveSystemStatus {
+
+  onlineUsers: number;
+  activeAdmins: number;
+  recentMatches: number;
+  recentApprovals: number;
+  blockedUsers: number;
 }
 
 /* SYSTEM INSIGHTS */
@@ -141,9 +147,7 @@ Promise<Insight[]> {
   ];
 }
 
-/* =========================================
-   ADMIN METRICS
-========================================= */
+/* ADMIN METRICS */
 
 export async function getAdminMetrics() {
 
@@ -279,9 +283,7 @@ export async function getAdminMetrics() {
   }
 }
 
-/* =========================================
-   RECENT ADMIN LOGS
-========================================= */
+/* RECENT ADMIN LOGS */
 
 export async function getRecentAdminLogs():
 Promise<AdminLogItem[]> {
@@ -297,6 +299,90 @@ Promise<AdminLogItem[]> {
     });
 
   return logs;
+}
+
+/* LIVE SYSTEM STATUS */
+
+export async function getLiveSystemStatus():
+Promise<LiveSystemStatus> {
+
+  /* ONLINE USERS */
+
+  const onlineUsers =
+    await prisma.user.count({
+
+      where: {
+        isOnline: true,
+      },
+    });
+
+  /* ACTIVE ADMINS */
+
+  const activeAdmins =
+    await prisma.user.count({
+
+      where: {
+
+        role: "ADMIN",
+        isOnline: true,
+      },
+    });
+
+  /* RECENT MATCHES */
+
+  const recentMatches =
+    await prisma.match.count({
+
+      where: {
+
+        createdAt: {
+
+          gte: new Date(
+            Date.now() -
+            1000 * 60 * 60
+          ),
+        },
+      },
+    });
+
+  /* RECENT APPROVALS */
+
+  const recentApprovals =
+    await prisma.adminLog.count({
+
+      where: {
+
+        action:
+          "APPROVE_USER",
+
+        createdAt: {
+
+          gte: new Date(
+            Date.now() -
+            1000 * 60 * 60 * 24
+          ),
+        },
+      },
+    });
+
+  /* BLOCKED USERS */
+
+  const blockedUsers =
+    await prisma.user.count({
+
+      where: {
+        blocked: true,
+      },
+    });
+
+  return {
+
+    onlineUsers,
+    activeAdmins,
+    recentMatches,
+    recentApprovals,
+    blockedUsers,
+  };
 }
 
 

@@ -107,27 +107,19 @@ export default function AdminStats({
           flex
           items-center
           justify-between
-
           gap-4
-
           mb-5
         "
       >
 
         <div>
-
           <p
             className="
               text-[10px]
-
               uppercase
-
               tracking-[0.35em]
-
               text-yellow-300/70
-
               font-black
-
               mb-2
             "
           >
@@ -138,17 +130,13 @@ export default function AdminStats({
             className="
               text-2xl
               md:text-3xl
-
               font-black
-
               text-white
             "
           >
             Métricas Operacionais
           </h2>
-
         </div>
-
       </div>
 
       {/* GRID */}
@@ -156,11 +144,9 @@ export default function AdminStats({
       <div
         className="
           grid
-
           grid-cols-2
           md:grid-cols-3
           xl:grid-cols-5
-
           gap-4
         "
       >
@@ -172,27 +158,17 @@ export default function AdminStats({
 
             className="
               relative
-
               overflow-hidden
-
               rounded-[1.8rem]
-
               border
               border-white/10
-
               bg-white/3
-
               backdrop-blur-2xl
-
-              p-5
-
-              min-h-36.25
-
-              shadow-[0_0_40px_rgba(0,0,0,0.35)]
-
+              px-4
+              py-3
+              shadow-none
               transition-all
               duration-300
-
               hover:-translate-y-1
               hover:border-yellow-500/20
               hover:bg-white/4.5
@@ -204,15 +180,11 @@ export default function AdminStats({
             <div
               className={`
                 absolute
-
                 top-0
                 right-0
-
                 w-28
                 h-28
-
                 rounded-full
-
                 blur-3xl
 
                 ${card.glow}
@@ -224,11 +196,9 @@ export default function AdminStats({
             <div
               className="
                 relative
-
                 flex
                 items-center
                 justify-between
-
                 mb-5
               "
             >
@@ -236,13 +206,9 @@ export default function AdminStats({
               <p
                 className="
                   text-[10px]
-
                   uppercase
-
                   tracking-[0.28em]
-
                   text-white/35
-
                   font-black
                 "
               >
@@ -253,45 +219,40 @@ export default function AdminStats({
                 className="
                   w-2
                   h-2
-
                   rounded-full
-
                   bg-white/20
                 "
               />
-
             </div>
 
-            {/* VALUE */}
+          {/* VALUE */}
 
-            <div
-              className="
-                relative
-              "
+          <div
+            className="
+              relative
+              flex
+              items-center
+              justify-center
+              flex-1
+            "
+          >
+
+            <h2
+              className={`
+                text-2xl
+                md:text-4xl
+                font-black
+                tracking-tight
+
+                ${card.accent}
+              `}
             >
-
-              <h2
-                className={`
-                  text-3xl
-                  md:text-4xl
-
-                  font-black
-
-                  tracking-tight
-
-                  ${card.accent}
-                `}
-              >
-                {card.value}
-              </h2>
-
-            </div>
-
+              {card.value}
+            </h2>
+          </div>
           </div>
         ))}
-
       </div>
-
     </section>
   );
 }

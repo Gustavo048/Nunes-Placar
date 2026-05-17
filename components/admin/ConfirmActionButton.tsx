@@ -14,7 +14,8 @@ interface ConfirmActionButtonProps {
     | 'green'
     | 'red'
     | 'blue'
-    | 'emerald';
+    | 'emerald'
+    | 'yellow';
 
   loadingText?: string;
 }
@@ -84,6 +85,13 @@ export default function ConfirmActionButton({
       hover:bg-emerald-500/20
       border-emerald-500/10
       text-emerald-300
+    `,
+
+    yellow: `
+      bg-yellow-500/10
+      hover:bg-yellow-500/20
+      border-yellow-500/10
+      text-yellow-300
     `,
   };
 
