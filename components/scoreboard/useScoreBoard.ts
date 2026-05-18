@@ -1,13 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
-import { useSession } from "next-auth/react";
-import { incrementGuestUsage, getGuestUsage } from "@/app/actions/guest";
-import { recordVictory } from "@/app/actions/ranking";
-import { getGuestId } from "@/lib/guest";
-import { getWinner, isTieGame, isEmptyGame, resetTeams } from "./game.utils";
-import { type Team, type GameMode } from "./types";
+import {
+  useState,
+  useEffect
+} from "react";
+
+import { toast }
+from "sonner";
+
+import {
+  useSession
+} from "next-auth/react";
+
+import {
+  incrementGuestUsage,
+  getGuestUsage
+} from "@/app/actions/guest";
+
+import {
+  recordVictory
+} from "@/app/actions/ranking";
+
+import {
+  getGuestId
+} from "@/lib/guest";
+
+import {
+  getWinner,
+  isTieGame,
+  isEmptyGame,
+  resetTeams
+} from "./game.utils";
+
+import {
+  type Team,
+  type GameMode
+} from "./types";
 
 export function useScoreBoard() {
 
@@ -25,6 +53,11 @@ export function useScoreBoard() {
   /* STATES */
 
   const [
+    gameStarted,
+    setGameStarted
+  ] = useState(false);
+
+  const [
     guestBlocked,
     setGuestBlocked
   ] = useState(false);
@@ -38,12 +71,6 @@ export function useScoreBoard() {
     loadingSave,
     setLoadingSave
   ] = useState(false);
-
-      /* SYSTEM LOCK */
-
-  const isSystemLocked =
-    guestBlocked &&
-    !isAuthenticated;
 
   const [
     showSaveModal,
@@ -87,6 +114,12 @@ export function useScoreBoard() {
     },
   ]);
 
+  /* SYSTEM LOCK */
+
+  const isSystemLocked =
+    guestBlocked &&
+    !isAuthenticated;
+
   /* REMAINING GAMES */
 
   const remainingGames =
@@ -101,13 +134,13 @@ export function useScoreBoard() {
 
     async function checkGuestUsage() {
 
-      /* AGUARDA HYDRATION */
+      /* WAIT HYDRATION */
 
       if (status === "loading") {
         return;
       }
 
-      /* USER AUTHENTICATED */
+      /* AUTH USER */
 
       if (isAuthenticated) {
         return;
@@ -245,6 +278,17 @@ export function useScoreBoard() {
       return;
     }
 
+    /* GAME NOT STARTED */
+
+    if (!gameStarted) {
+
+      toast.error(
+        "Inicie uma partida primeiro!"
+      );
+
+      return;
+    }
+
     /* TIE */
 
     if (isTieGame(teams)) {
@@ -351,6 +395,10 @@ export function useScoreBoard() {
           }))
         );
 
+        /* RESET GAME STATE */
+
+        setGameStarted(false);
+
         toast.success(
           "Partida registrada no ranking!"
         );
@@ -398,6 +446,10 @@ export function useScoreBoard() {
       return;
     }
 
+    /* START GAME */
+
+    setGameStarted(true);
+
     setTeams((prev) =>
 
       resetTeams(prev)
@@ -417,6 +469,8 @@ export function useScoreBoard() {
     isAuthenticated,
 
     isSystemLocked,
+
+    gameStarted,
 
     guestBlocked,
 
