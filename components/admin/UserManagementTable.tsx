@@ -1,27 +1,19 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-
-import UserRow
-from './UserRow';
+import UserRow from './UserRow';
 
 interface User {
 
   id: string;
-
   name: string;
   email: string;
-
   city: string | null;
   state: string | null;
-
   role: string;
   status: string;
-
   blocked: boolean;
-
   isOnline: boolean;
-
   createdAt: Date;
   lastLoginAt: Date | null;
 }
@@ -127,17 +119,12 @@ export default function UserManagementTable({
     <section
       className="
         rounded-[2rem]
-
         border
         border-white/10
-
         bg-white/2.5
-
         backdrop-blur-2xl
-
         p-4
         md:p-6
-
         shadow-[0_0_60px_rgba(0,0,0,0.45)]
       "
     >
@@ -149,30 +136,21 @@ export default function UserManagementTable({
           flex
           flex-col
           xl:flex-row
-
           xl:items-center
           xl:justify-between
-
           gap-5
-
           mb-6
         "
       >
 
         <div>
-
           <p
             className="
               text-[10px]
-
               uppercase
-
               tracking-[0.35em]
-
               text-yellow-300/70
-
               font-black
-
               mb-2
             "
           >
@@ -182,15 +160,12 @@ export default function UserManagementTable({
           <h2
             className="
               text-2xl
-
               font-black
-
               text-white
             "
           >
             Usuários do Sistema
           </h2>
-
         </div>
 
         {/* SEARCH */}
@@ -211,27 +186,18 @@ export default function UserManagementTable({
           className="
             w-full
             xl:w-80
-
             px-5
             py-3
-
             rounded-2xl
-
             bg-black/30
-
             border
             border-white/10
-
             text-white
-
             placeholder:text-white/25
-
             outline-none
-
             focus:border-yellow-500/30
           "
         />
-
       </div>
 
       {/* FILTERS */}
@@ -240,9 +206,7 @@ export default function UserManagementTable({
         className="
           flex
           flex-wrap
-
           gap-2
-
           mb-6
         "
       >
@@ -259,19 +223,12 @@ export default function UserManagementTable({
             className={`
               px-4
               py-2
-
               rounded-xl
-
               text-[10px]
-
               uppercase
-
               tracking-[0.2em]
-
               font-black
-
               transition-all
-
               border
 
               ${
@@ -293,7 +250,6 @@ export default function UserManagementTable({
             {item}
           </button>
         ))}
-
       </div>
 
       {/* TABLE */}
@@ -312,7 +268,6 @@ export default function UserManagementTable({
         >
 
           <thead>
-
             <tr
               className="
                 border-b
@@ -335,17 +290,11 @@ export default function UserManagementTable({
 
                   className="
                     text-left
-
                     py-4
-
                     text-[10px]
-
                     uppercase
-
                     tracking-[0.3em]
-
                     text-white/30
-
                     font-black
                   "
                 >

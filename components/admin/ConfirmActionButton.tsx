@@ -96,9 +96,7 @@ export default function ConfirmActionButton({
   };
 
   return (
-
     <button
-
       onClick={handleClick}
 
       disabled={loading}
@@ -106,21 +104,13 @@ export default function ConfirmActionButton({
       className={`
         px-3
         py-2
-
         rounded-xl
-
         border
-
         text-[10px]
-
         uppercase
-
         tracking-[0.18em]
-
         font-black
-
         transition-all
-
         disabled:opacity-50
         disabled:cursor-not-allowed
 

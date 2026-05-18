@@ -1,26 +1,18 @@
 'use client';
 
-import RankingTeamRow
-from "./RankingTeamRow";
+import RankingTeamRow from "./RankingTeamRow";
 
 interface RankingTeam {
 
   id: string;
-
   teamName: string;
-
   gameMode: string;
-
   victories: number;
-
   totalPoints: number;
-
   createdAt: Date;
 
   user: {
-
     name: string;
-
     email: string;
   };
 }
@@ -36,7 +28,6 @@ export default function RankingManagementTable({
 }: RankingManagementTableProps) {
 
   return (
-
     <section
       className="
         rounded-[2rem]
@@ -62,20 +53,7 @@ export default function RankingManagementTable({
         "
       >
 
-        <div>
-          <p
-            className="
-              text-[10px]
-              uppercase
-              tracking-[0.35em]
-              text-yellow-300/70
-              font-black
-              mb-2
-            "
-          >
-            RANKING MANAGEMENT
-          </p>
-
+        <div>         
           <h2
             className="
               text-2xl
@@ -104,7 +82,6 @@ export default function RankingManagementTable({
         >
 
           <thead>
-
             <tr
               className="
                 border-b
@@ -127,26 +104,18 @@ export default function RankingManagementTable({
 
                   className="
                     text-left
-
                     py-4
-
                     text-[10px]
-
                     uppercase
-
                     tracking-[0.3em]
-
                     text-white/30
-
                     font-black
                   "
                 >
                   {head}
                 </th>
               ))}
-
             </tr>
-
           </thead>
 
           <tbody>

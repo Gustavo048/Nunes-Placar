@@ -5,14 +5,11 @@ export default async function RankingAdminPage() {
 
   /* DATA */
 
-   const teams =
-    await getRankingTeams();
+   const teams = await getRankingTeams();
 
-  const recentMatches =
-    await getRecentMatches();
+  const recentMatches = await getRecentMatches();
 
   return (
-
     <div
       className="
         space-y-8
@@ -21,45 +18,7 @@ export default async function RankingAdminPage() {
 
       {/* HEADER */}
 
-      <section>
-
-        <div
-          className="
-            inline-flex
-            items-center
-            gap-2
-            mb-4
-            px-3
-            py-1.5
-            rounded-full
-            border
-            border-cyan-500/10
-            bg-cyan-500/5
-          "
-        >
-
-          <div
-            className="
-              w-2
-              h-2
-              rounded-full
-              bg-cyan-400
-            "
-          />
-
-          <span
-            className="
-              text-[10px]
-              uppercase
-              tracking-[0.3em]
-              text-cyan-200/80
-              font-black
-            "
-          >
-            RANKING MANAGEMENT
-          </span>
-        </div>
-
+      <section>     
         <h1
           className="
             text-3xl
@@ -128,20 +87,7 @@ export default async function RankingAdminPage() {
           "
         >
 
-          <div>
-
-            <p
-              className="
-                text-[10px]
-                uppercase
-                tracking-[0.35em]
-                text-cyan-300/70
-                font-black
-                mb-2
-              "
-            >
-              RECENT MATCHES
-            </p>
+          <div>        
 
             <h2
               className="

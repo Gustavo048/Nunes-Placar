@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  useState,
-  useTransition
-} from "react";
-
-import ConfirmActionButton
-from "@/components/admin/ConfirmActionButton";
-
+import { useState, useTransition } from "react";
+import ConfirmActionButton from "@/components/admin/ConfirmActionButton";
 import {
   deleteRankingTeam,
   resetRankingTeam,
@@ -17,23 +11,15 @@ import {
 interface RankingTeamRowProps {
 
   team: {
-
     id: string;
-
     teamName: string;
-
     gameMode: string;
-
     victories: number;
-
     totalPoints: number;
-
     createdAt: Date;
 
     user: {
-
       name: string;
-
       email: string;
     };
   };
@@ -101,14 +87,11 @@ export default function RankingTeamRow({
   }
 
   return (
-
     <tr
       className="
         border-b
         border-white/5
-
         hover:bg-white/2
-
         transition-all
       "
     >
@@ -122,19 +105,15 @@ export default function RankingTeamRow({
       >
 
         <div>
-
           <p
             className="
               text-white
-
               font-bold
             "
           >
             {team.teamName}
           </p>
-
         </div>
-
       </td>
 
       {/* OWNER */}
@@ -146,11 +125,9 @@ export default function RankingTeamRow({
       >
 
         <div>
-
           <p
             className="
               text-white/80
-
               font-medium
             "
           >
@@ -160,15 +137,12 @@ export default function RankingTeamRow({
           <p
             className="
               text-sm
-
               text-white/35
             "
           >
             {team.user.email}
           </p>
-
         </div>
-
       </td>
 
       {/* MODE */}
@@ -183,25 +157,17 @@ export default function RankingTeamRow({
           className="
             px-3
             py-1.5
-
             rounded-full
-
             bg-cyan-500/10
-
             text-cyan-300
-
             text-[10px]
-
             uppercase
-
             tracking-[0.2em]
-
             font-black
           "
         >
           {team.gameMode}
         </span>
-
       </td>
 
       {/* VICTORIES */}
@@ -227,25 +193,17 @@ export default function RankingTeamRow({
 
           className="
             w-24
-
             px-3
             py-2
-
             rounded-xl
-
             bg-black/30
-
             border
             border-white/10
-
             text-white
-
             outline-none
-
             focus:border-cyan-500/30
           "
         />
-
       </td>
 
       {/* POINTS */}
@@ -271,27 +229,18 @@ export default function RankingTeamRow({
 
           className="
             w-28
-
             px-3
             py-2
-
             rounded-xl
-
             bg-black/30
-
             border
             border-white/10
-
             text-yellow-300
-
             font-bold
-
             outline-none
-
             focus:border-yellow-500/30
           "
         />
-
       </td>
 
       {/* CREATED */}
@@ -299,9 +248,7 @@ export default function RankingTeamRow({
       <td
         className="
           py-5
-
           text-sm
-
           text-white/40
         "
       >
@@ -324,17 +271,14 @@ export default function RankingTeamRow({
           className="
             flex
             flex-wrap
-
             items-center
-
             gap-2
           "
         >
 
-          {/* SAVE */}
+          {/* SAVE BOTTON */}
 
           <button
-
             onClick={handleSave}
 
             disabled={isPending}
@@ -342,34 +286,24 @@ export default function RankingTeamRow({
             className="
               px-3
               py-2
-
               rounded-xl
-
               bg-cyan-500/10
               hover:bg-cyan-500/20
-
               border
               border-cyan-500/10
-
               text-cyan-300
-
               text-[10px]
-
               uppercase
-
               tracking-[0.18em]
-
               font-black
-
               transition-all
-
               disabled:opacity-50
             "
           >
             Salvar
           </button>
 
-          {/* RESET */}
+          {/* RESET BOTTON*/}
 
           <ConfirmActionButton
 
@@ -388,7 +322,7 @@ export default function RankingTeamRow({
             }}
           />
 
-          {/* DELETE */}
+          {/* DELETE BOTTON*/}
 
           <ConfirmActionButton
 
@@ -408,11 +342,8 @@ export default function RankingTeamRow({
 
             }}
           />
-
         </div>
-
       </td>
-
     </tr>
   );
 }

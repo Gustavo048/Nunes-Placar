@@ -162,7 +162,6 @@ export default function Home() {
             />
 
           </aside>
-
         </div>
 
         {/* FOOTER */}
@@ -226,13 +225,9 @@ export default function Home() {
               Santa Catarina • Brasil
 
             </div>
-
           </div>
-
         </footer>
-
       </div>
-
     </main>
   );
 }

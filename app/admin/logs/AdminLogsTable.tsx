@@ -1,13 +1,9 @@
 interface AdminLogItem {
 
   id: string;
-
   action: string;
-
   description: string | null;
-
   targetId: string | null;
-
   createdAt: Date;
 }
 
@@ -26,7 +22,6 @@ function getActionStyles(
   ) {
 
     return {
-
       badge:
         "bg-red-500/10 text-red-300",
 
@@ -40,7 +35,6 @@ function getActionStyles(
   ) {
 
     return {
-
       badge:
         "bg-yellow-500/10 text-yellow-300",
 
@@ -54,7 +48,6 @@ function getActionStyles(
   ) {
 
     return {
-
       badge:
         "bg-orange-500/10 text-orange-300",
 
@@ -68,7 +61,6 @@ function getActionStyles(
   ) {
 
     return {
-
       badge:
         "bg-cyan-500/10 text-cyan-300",
 
@@ -78,7 +70,6 @@ function getActionStyles(
   }
 
   return {
-
     badge:
       "bg-emerald-500/10 text-emerald-300",
 
@@ -117,21 +108,7 @@ export default function AdminLogsTable({
         "
       >
 
-        <div>
-
-          <p
-            className="
-              text-[10px]
-              uppercase
-              tracking-[0.35em]
-              text-yellow-300/70
-              font-black
-              mb-2
-            "
-          >
-            ADMIN AUDIT
-          </p>
-
+        <div>        
           <h2
             className="
               text-2xl
@@ -139,7 +116,7 @@ export default function AdminLogsTable({
               text-white
             "
           >
-            Logs Administrativos
+            Atualizações
           </h2>
         </div>
       </div>
@@ -159,7 +136,6 @@ export default function AdminLogsTable({
           "
         >
           <thead>
-
             <tr
               className="
                 border-b
@@ -190,7 +166,6 @@ export default function AdminLogsTable({
                   {head}
                 </th>
               ))}
-
             </tr>
           </thead>
 
@@ -204,7 +179,6 @@ export default function AdminLogsTable({
                 );
 
               return (
-
                 <tr
                   key={log.id}
 

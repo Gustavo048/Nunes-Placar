@@ -84,17 +84,12 @@ export default function SystemInsights({
     <section
       className="
         rounded-[2rem]
-
         border
         border-white/10
-
         bg-white/2.5
-
         backdrop-blur-2xl
-
         p-5
         md:p-6
-
         shadow-[0_0_60px_rgba(0,0,0,0.45)]
       "
     >
@@ -110,15 +105,10 @@ export default function SystemInsights({
         <p
           className="
             text-[10px]
-
             uppercase
-
             tracking-[0.35em]
-
             text-yellow-300/70
-
             font-black
-
             mb-2
           "
         >
@@ -128,15 +118,12 @@ export default function SystemInsights({
         <h2
           className="
             text-2xl
-
             font-black
-
             text-white
           "
         >
           Insights do Sistema
         </h2>
-
       </div>
 
       {/* GRID */}
@@ -144,10 +131,8 @@ export default function SystemInsights({
       <div
         className="
           grid
-
           grid-cols-1
           lg:grid-cols-2
-
           gap-4
         "
       >
@@ -163,25 +148,17 @@ export default function SystemInsights({
             );
 
           return (
-
             <div
               key={index}
 
               className={`
                 relative
-
                 overflow-hidden
-
                 rounded-[1.7rem]
-
                 border
-
                 bg-black/20
-
                 backdrop-blur-xl
-
                 p-5
-
                 transition-all
 
                 ${styles.border}
@@ -193,15 +170,11 @@ export default function SystemInsights({
               <div
                 className={`
                   absolute
-
                   top-0
                   right-0
-
                   w-24
                   h-24
-
                   rounded-full
-
                   blur-3xl
 
                   ${styles.glow}
@@ -214,20 +187,13 @@ export default function SystemInsights({
                 className={`
                   inline-flex
                   items-center
-
                   px-3
                   py-1.5
-
                   rounded-full
-
                   text-[10px]
-
                   uppercase
-
                   tracking-[0.25em]
-
                   font-black
-
                   mb-4
 
                   ${styles.badge}
@@ -241,14 +207,10 @@ export default function SystemInsights({
               <h3
                 className="
                   relative
-
                   text-lg
                   md:text-xl
-
                   font-black
-
                   text-white
-
                   mb-3
                 "
               >
@@ -260,23 +222,18 @@ export default function SystemInsights({
               <p
                 className="
                   relative
-
                   text-sm
-
                   text-white/45
-
                   leading-relaxed
                 "
               >
                 {insight.description}
               </p>
-
             </div>
           );
         })}
 
       </div>
-
     </section>
   );
 }

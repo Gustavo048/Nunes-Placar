@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  AnimatePresence,
-  motion
-} from 'framer-motion';
-
+import { AnimatePresence, motion } from 'framer-motion';
 import TeamColumn from '../TeamColumn';
 
 import {
@@ -70,7 +66,6 @@ export default function TeamsGrid({
           grid
           grid-cols-1
           md:grid-cols-2
-
           gap-4
           md:gap-6
         "

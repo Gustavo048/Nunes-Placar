@@ -1,9 +1,5 @@
-import UserManagementTable
-from "@/components/admin/UserManagementTable";
-
-import {
-  getAllUsers
-} from "@/app/actions/admin";
+import UserManagementTable from "@/components/admin/UserManagementTable";
+import { getAllUsers } from "@/app/actions/admin";
 
 export default async function AdminUsersPage() {
 
@@ -13,7 +9,6 @@ export default async function AdminUsersPage() {
     await getAllUsers();
 
   return (
-
     <div
       className="
         space-y-8
@@ -23,24 +18,17 @@ export default async function AdminUsersPage() {
       {/* HEADER */}
 
       <section>
-
         <div
           className="
             inline-flex
             items-center
-
             gap-2
-
             mb-4
-
             px-3
             py-1.5
-
             rounded-full
-
             border
             border-yellow-500/10
-
             bg-yellow-500/5
           "
         >
@@ -49,9 +37,7 @@ export default async function AdminUsersPage() {
             className="
               w-2
               h-2
-
               rounded-full
-
               bg-yellow-400
             "
           />
@@ -59,32 +45,23 @@ export default async function AdminUsersPage() {
           <span
             className="
               text-[10px]
-
               uppercase
-
               tracking-[0.3em]
-
               text-yellow-200/80
-
               font-black
             "
           >
             USER CONTROL
           </span>
-
         </div>
 
         <h1
           className="
             text-3xl
             md:text-5xl
-
             font-black
-
             text-white
-
             leading-none
-
             mb-4
           "
         >
@@ -95,11 +72,8 @@ export default async function AdminUsersPage() {
           className="
             text-sm
             md:text-base
-
             text-white/45
-
             max-w-2xl
-
             leading-relaxed
           "
         >
@@ -107,7 +81,6 @@ export default async function AdminUsersPage() {
           aprovações, bloqueios e
           monitore atividade em tempo real.
         </p>
-
       </section>
 
       {/* USERS TABLE */}
@@ -117,9 +90,7 @@ export default async function AdminUsersPage() {
         <UserManagementTable
           users={users}
         />
-
       </section>
-
     </div>
   );
 }

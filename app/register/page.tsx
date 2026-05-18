@@ -11,23 +11,17 @@ export default function RegisterPage() {
 
   /* STATES */
 
-  const [state, setState] =
-    useState("");
+  const [state, setState] = useState("");
 
-  const [name, setName] =
-    useState("");
+  const [name, setName] = useState("");
 
-  const [nickname, setNickname] =
-    useState("");
+  const [nickname, setNickname] = useState("");
 
-  const [city, setCity] =
-    useState("");
+  const [city, setCity] = useState("");
 
-  const [email, setEmail] =
-    useState("");
+  const [email, setEmail] = useState("");
 
-  const [password, setPassword] =
-    useState("");
+  const [password, setPassword] = useState("");
 
   const [
     confirmPassword,

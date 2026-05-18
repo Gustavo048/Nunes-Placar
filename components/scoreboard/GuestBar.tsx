@@ -3,11 +3,15 @@
 import Link from 'next/link';
 
 interface Props {
+
   remainingGames: number;
+
+  guestBlocked: boolean;
 }
 
 export default function GuestBar({
-  remainingGames
+  remainingGames,
+  guestBlocked
 }: Props) {
 
   return (
@@ -26,9 +30,9 @@ export default function GuestBar({
         px-3
         md:px-5
 
-        py-3
+        py-2.5
 
-        rounded-[1.4rem]
+        rounded-2xl
 
         border
 
@@ -38,17 +42,34 @@ export default function GuestBar({
       "
 
       style={{
+
         borderColor:
-          remainingGames === 1
-            ? 'rgba(234,179,8,0.18)'
-            : 'rgba(255,255,255,0.06)',
+
+          guestBlocked
+
+            ? 'rgba(239,68,68,0.18)'
+
+            : remainingGames === 1
+
+              ? 'rgba(234,179,8,0.18)'
+
+              : 'rgba(255,255,255,0.06)',
 
         background:
-          remainingGames === 1
-            ? 'rgba(234,179,8,0.05)'
-            : 'rgba(255,255,255,0.025)'
+
+          guestBlocked
+
+            ? 'rgba(239,68,68,0.05)'
+
+            : remainingGames === 1
+
+              ? 'rgba(234,179,8,0.05)'
+
+              : 'rgba(255,255,255,0.025)'
       }}
     >
+
+      {/* LEFT */}
 
       <div
         className="
@@ -71,14 +92,25 @@ export default function GuestBar({
             shrink-0
 
             ${
-              remainingGames === 1
-                ? 'bg-yellow-400'
-                : 'bg-white/40'
+
+              guestBlocked
+
+                ? 'bg-red-400'
+
+                : remainingGames === 1
+
+                  ? 'bg-yellow-400'
+
+                  : 'bg-white/40'
             }
           `}
         />
 
-        <div className="leading-tight">
+        <div
+          className="
+            leading-tight
+          "
+        >
 
           <p
             className="
@@ -107,51 +139,55 @@ export default function GuestBar({
               font-medium
 
               ${
-                remainingGames === 1
-                  ? 'text-yellow-300'
-                  : 'text-white/65'
+
+                guestBlocked
+
+                  ? 'text-red-300'
+
+                  : remainingGames === 1
+
+                    ? 'text-yellow-300'
+
+                    : 'text-white/65'
               }
             `}
           >
 
-            {remainingGames > 1
-              ? `${remainingGames} partidas gratuitas restantes`
-              : 'Última partida gratuita disponível'}
+            {
+
+              guestBlocked
+
+                ? 'Limite gratuito atingido'
+
+                : remainingGames > 1
+
+                  ? `${remainingGames} partidas gratuitas restantes`
+
+                  : 'Última partida gratuita disponível'
+            }
 
           </p>
-
         </div>
-
       </div>
+
+      {/* CTA */}
 
       <Link
         href="/register"
 
         className="
           shrink-0
-
           px-4
-          md:px-5
-
-          py-2.5
-
+          py-2
           rounded-xl
-
           bg-yellow-500
           hover:bg-yellow-400
-
           text-black
-
-          text-[10px]
-
+          text-[9px]
           uppercase
-
           tracking-[0.18em]
-
           font-black
-
           transition-all
-
           shadow-[0_0_20px_rgba(234,179,8,0.18)]
         "
       >

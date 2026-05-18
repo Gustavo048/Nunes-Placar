@@ -25,6 +25,8 @@ export default function TeamColumn({
 }: TeamProps) {
   const [val, setVal] = useState("");
 
+  const [selectedShortcut, setSelectedShortcut] = useState<number | null>(null);
+
   /* ACTION */
 
   const handleAction = () => {
@@ -32,8 +34,8 @@ export default function TeamColumn({
 
     if (!isNaN(points)) {
       onAddPoints(points);
-
       setVal("");
+      setSelectedShortcut(null);
     }
   };
 
@@ -174,21 +176,35 @@ export default function TeamColumn({
             {trucoShortcuts.map((pts) => (
               <button
                 key={pts}
-                onClick={() => onAddPoints(pts)}
-                className="
-                  bg-white/5
-                  hover:bg-yellow-600
-                  hover:text-black
+                onClick={() => {
+                  setVal(String(pts));
+                  setSelectedShortcut(pts);
+                }}
+                className={`
                   border
-                  border-white/10
                   py-2.5
                   rounded-xl
                   text-[11px]
                   font-black
-                  text-white
                   transition-all
                   active:scale-95
-                "
+
+              ${
+                selectedShortcut === pts
+                  ? `
+                    bg-yellow-600
+                    text-black
+                    border-yellow-500
+                  `
+                  : `
+                    bg-white/5
+                    hover:bg-yellow-600
+                    hover:text-black
+                    border-white/10
+                    text-white
+                  `
+              }
+            `}
               >
                 {pts}
               </button>

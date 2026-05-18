@@ -10,111 +10,259 @@ import { getWinner, isTieGame, isEmptyGame, resetTeams } from "./game.utils";
 import { type Team, type GameMode } from "./types";
 
 export function useScoreBoard() {
-  const { data: session } = useSession();
+
+  const {
+    data: session,
+    status
+  } = useSession();
+
+  /* AUTH */
+
+  const isAuthenticated =
+    status === "authenticated" &&
+    !!session?.user?.email;
 
   /* STATES */
 
-  const [guestBlocked, setGuestBlocked] = useState(false);
+  const [
+    guestBlocked,
+    setGuestBlocked
+  ] = useState(false);
 
-  const [guestGamesPlayed, setGuestGamesPlayed] = useState(0);
+  const [
+    guestGamesPlayed,
+    setGuestGamesPlayed
+  ] = useState(0);
 
-  const [loadingSave, setLoadingSave] = useState(false);
+  const [
+    loadingSave,
+    setLoadingSave
+  ] = useState(false);
 
-  const [showSaveModal, setShowSaveModal] = useState(false);
+      /* SYSTEM LOCK */
 
-  const [gameMode, setGameMode] = useState<GameMode>("CANASTRA");
+  const isSystemLocked =
+    guestBlocked &&
+    !isAuthenticated;
 
-  const [teams, setTeams] = useState<Team[]>([
+  const [
+    showSaveModal,
+    setShowSaveModal
+  ] = useState(false);
+
+  const [
+    showGuestBlockedModal,
+    setShowGuestBlockedModal
+  ] = useState(false);
+
+  const [
+    gameMode,
+    setGameMode
+  ] = useState<GameMode>(
+    "CANASTRA"
+  );
+
+  const [
+    teams,
+    setTeams
+  ] = useState<Team[]>([
     {
       id: "A",
+
       name: "Equipe A",
+
       score: 0,
+
       history: [],
     },
+
     {
       id: "B",
+
       name: "Equipe B",
+
       score: 0,
+
       history: [],
     },
   ]);
 
   /* REMAINING GAMES */
 
-  const remainingGames = Math.max(0, 3 - guestGamesPlayed);
+  const remainingGames =
+    Math.max(
+      0,
+      3 - guestGamesPlayed
+    );
 
   /* CHECK GUEST USAGE */
 
   useEffect(() => {
+
     async function checkGuestUsage() {
-      if (session?.user) {
+
+      /* AGUARDA HYDRATION */
+
+      if (status === "loading") {
         return;
       }
 
-      const guestId = getGuestId();
+      /* USER AUTHENTICATED */
+
+      if (isAuthenticated) {
+        return;
+      }
+
+      const guestId =
+        getGuestId();
 
       if (!guestId) {
         return;
       }
 
-      const usage = await getGuestUsage(guestId);
+      const usage =
+        await getGuestUsage(
+          guestId
+        );
 
       if (usage.success) {
-        setGuestGamesPlayed(usage.gamesPlayed);
 
-        if (usage.gamesPlayed >= 3) {
-          setGuestBlocked(true);
+        setGuestGamesPlayed(
+          usage.gamesPlayed
+        );
+
+        if (
+          usage.gamesPlayed >= 3
+        ) {
+
+          setGuestBlocked(
+            true
+          );
         }
       }
     }
 
     checkGuestUsage();
-  }, [session]);
+
+  }, [
+    isAuthenticated,
+    status
+  ]);
 
   /* ADD POINTS */
 
-  function addPoints(teamId: string, points: number) {
+  function addPoints(
+
+    teamId: string,
+
+    points: number
+  ) {
+
+    /* SYSTEM LOCK */
+
+    if (isSystemLocked) {
+
+      setShowGuestBlockedModal(
+        true
+      );
+
+      return;
+    }
+
     setTeams((prev) =>
+
       prev.map((team) =>
+
         team.id === teamId
+
           ? {
+
               ...team,
 
-              score: team.score + points,
+              score:
+                team.score +
+                points,
 
-              history: [...team.history, points],
+              history: [
+                ...team.history,
+                points
+              ],
             }
-          : team,
-      ),
+
+          : team
+      )
     );
   }
 
-  /* UPDATE NAME */
+  /* UPDATE TEAM NAME */
 
-  function updateTeamName(teamId: string, name: string) {
+  function updateTeamName(
+
+    teamId: string,
+
+    name: string
+  ) {
+
+    /* SYSTEM LOCK */
+
+    if (isSystemLocked) {
+
+      setShowGuestBlockedModal(
+        true
+      );
+
+      return;
+    }
+
     setTeams((prev) =>
+
       prev.map((team) =>
+
         team.id === teamId
+
           ? {
               ...team,
               name,
             }
-          : team,
-      ),
+
+          : team
+      )
     );
   }
 
   /* SAVE GAME */
 
   async function handleSaveGame() {
-    if (isTieGame(teams)) {
-      toast.error("O jogo está empatado!");
+
+    /* SYSTEM LOCK */
+
+    if (isSystemLocked) {
+
+      setShowGuestBlockedModal(
+        true
+      );
 
       return;
     }
 
+    /* TIE */
+
+    if (isTieGame(teams)) {
+
+      toast.error(
+        "O jogo está empatado!"
+      );
+
+      return;
+    }
+
+    /* EMPTY */
+
     if (isEmptyGame(teams)) {
-      toast.error("Inicie uma partida primeiro!");
+
+      toast.error(
+        "Inicie uma partida primeiro!"
+      );
 
       return;
     }
@@ -125,53 +273,112 @@ export function useScoreBoard() {
   /* CONFIRM SAVE */
 
   async function confirmSaveGame() {
+
+    /* SYSTEM LOCK */
+
+    if (isSystemLocked) {
+
+      setShowGuestBlockedModal(
+        true
+      );
+
+      return;
+    }
+
     setLoadingSave(true);
 
     try {
-      const winner = getWinner(teams);
+
+      const winner =
+        getWinner(teams);
 
       /* GUEST CONTROL */
 
-      if (!session?.user) {
-        const guestId = getGuestId();
+      if (!isAuthenticated) {
+
+        const guestId =
+          getGuestId();
 
         if (guestId) {
-          const usage = await incrementGuestUsage(guestId);
 
-          if (usage.success && usage.gamesPlayed >= 3) {
-            setGuestBlocked(true);
+          const usage =
+            await incrementGuestUsage(
+              guestId
+            );
+
+          if (
+            usage.success &&
+            usage.gamesPlayed >= 3
+          ) {
+
+            setGuestBlocked(
+              true
+            );
+
+            setShowGuestBlockedModal(
+              true
+            );
           }
 
-          setGuestGamesPlayed(usage.gamesPlayed);
+          setGuestGamesPlayed(
+            usage.gamesPlayed
+          );
         }
       }
 
-      const result = await recordVictory(winner.name, winner.score, gameMode);
+      const result =
+        await recordVictory(
 
-      if (result.success) {
-        /* RESETA APENAS SCORE/HISTÓRICO */
+          winner.name,
 
-        setTeams((prev) =>
-          prev.map((team) => ({
-            ...team,
-            score: 0,
-            history: [],
-          })),
+          winner.score,
+
+          gameMode
         );
 
-        toast.success("Partida registrada no ranking!");
+      if (result.success) {
+
+        /* RESET SCORE */
+
+        setTeams((prev) =>
+
+          prev.map((team) => ({
+            ...team,
+
+            score: 0,
+
+            history: [],
+          }))
+        );
+
+        toast.success(
+          "Partida registrada no ranking!"
+        );
+
       } else {
-        toast.error(result.message);
+
+        toast.error(
+          result.message
+        );
       }
 
       setShowSaveModal(false);
-    } catch (error) {
-      console.error("Falha ao salvar ranking:", error);
 
-      toast.error("Erro ao salvar ranking.");
+    } catch (error) {
+
+      console.error(
+        "Falha ao salvar ranking:",
+        error
+      );
+
+      toast.error(
+        "Erro ao salvar ranking."
+      );
 
       setShowSaveModal(false);
+
     } finally {
+
       setLoadingSave(false);
     }
   }
@@ -179,31 +386,66 @@ export function useScoreBoard() {
   /* NEW GAME */
 
   function startNewGame() {
-    setTeams((prev) => resetTeams(prev));
 
-    toast.success("Nova partida iniciada!");
+    /* SYSTEM LOCK */
+
+    if (isSystemLocked) {
+
+      setShowGuestBlockedModal(
+        true
+      );
+
+      return;
+    }
+
+    setTeams((prev) =>
+
+      resetTeams(prev)
+    );
+
+    toast.success(
+      "Nova partida iniciada!"
+    );
   }
 
   return {
+
     session,
 
+    status,
+
+    isAuthenticated,
+
+    isSystemLocked,
+
     guestBlocked,
+
     guestGamesPlayed,
+
     remainingGames,
 
     loadingSave,
+
     showSaveModal,
+
     setShowSaveModal,
 
+    showGuestBlockedModal,
+
+    setShowGuestBlockedModal,
+
     gameMode,
+
     setGameMode,
 
     teams,
 
     addPoints,
+
     updateTeamName,
 
     handleSaveGame,
+
     confirmSaveGame,
 
     startNewGame,

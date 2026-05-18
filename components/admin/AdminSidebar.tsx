@@ -46,42 +46,7 @@ export default function AdminSidebar() {
         className="
           mb-10
         "
-      >
-        <div
-          className="
-            inline-flex
-            items-center
-            gap-2
-            mb-4
-            px-3
-            py-1.5
-            rounded-full
-            border
-            border-yellow-500/10
-            bg-yellow-500/5
-          "
-        >
-          <div
-            className="
-              w-2
-              h-2
-              rounded-full
-              bg-yellow-400
-            "
-          />
-
-          <span
-            className="
-              text-[10px]
-              uppercase
-              tracking-[0.3em]
-              text-yellow-200/80
-              font-black
-            "
-          >
-            ADMIN SYSTEM
-          </span>
-        </div>
+      >     
 
         <h1
           className="
@@ -110,7 +75,7 @@ export default function AdminSidebar() {
               font-black
             "
           >
-            OPERATIONS
+            Menu
           </p>
         </div>
       </div>
